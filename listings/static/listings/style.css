@@ -1,0 +1,36 @@
+/* ---- iRent ProSpace custom look ---- */
+:root {
+    --primary: #f5f5f5;       /* page background */
+    --accent: #ff6000;        /* orange highlight (change to any colour you like) */
+    --text: #333;
+    --light-border: #e0e0e0;
+}
+
+body {
+    background: var(--primary);
+    color: var(--text);
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* navbar – flat white with subtle shadow */
+.navbar-custom {
+    background: #ffffff !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+}
+.navbar-custom .navbar-brand,
+.navbar-custom .btn {
+    color: var(--text) !important;
+}
+.navbar-custom .btn {
+    background: var(--accent);
+    border: none;
+}
+.navbar-custom .btn:hover {
+    opacity: .9;
+}
+
+/* cards – clean white */
+.card {
+    border: 1px solid var(--light-border);
+    background: #ffffff;
+}

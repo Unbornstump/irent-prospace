@@ -52,3 +52,9 @@ body {
     padding: .45rem .9rem;
     font-weight: 500;
 }
+.btn-accent {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+}
+.btn-accent:hover { opacity: .9; }

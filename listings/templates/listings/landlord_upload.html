@@ -1,21 +1,38 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>List Your Property – iRent ProSpace</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="utf-8">
+  <title>List Your Property – iRent ProSpace</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'listings/style.css' %}">
+  <style>
+    /* small tweaks for upload page */
+    .upload-box { max-width: 700px; margin: 2rem auto; }
+  </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-custom">
   <div class="container">
     <a class="navbar-brand" href="{% url 'home' %}">iRent ProSpace</a>
   </div>
 </nav>
 
-<div class="container mt-4">
-  <h1>Landlord Upload Form</h1>
-  <p class="text-muted">Full form coming soon…</p>
-  <a class="btn btn-primary" href="{% url 'home' %}">Back to Home</a>
+<div class="container upload-box">
+  <h2 class="mb-4">List Your Rental Property</h2>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <label for="images" class="form-label mt-3">Upload photos (hold Ctrl to select many):</label>
+    <input type="file" name="images" id="images" class="form-control mb-3" multiple>
+    <button class="btn btn-accent w-100">Publish Property</button>
+  </form>
+
+  <div class="text-center mt-3">
+    <a href="{% url 'home' %}">← Back to Home</a>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

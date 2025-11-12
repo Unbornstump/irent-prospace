@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ property.title }} – iRent ProSpace</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'listings/style.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-custom">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">iRent ProSpace</a>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <h2>{{ property.title }}</h2>
+  <p><strong>Location:</strong> {{ property.location }}</p>
+  <p><strong>Price:</strong> KES {{ property.price }}</p>
+  <p><strong>Type:</strong> {{ property.bedrooms }}</p>
+  <p>{{ property.description|linebreaks }}</p>
+
+  <a class="btn btn-accent" href="{% url 'home' %}">← Back to listings</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -3,5 +3,6 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('upload/', views.landlord_upload, name='landlord_upload'),  # ← new
+    path('upload/', views.landlord_upload, name='landlord_upload'),
+    path('property/<int:pk>/', views.property_detail, name='property_detail'),
 ]

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>iRent Monitor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'listings/style.css' %}">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-custom">
+  <div class="container">
+    <span class="navbar-brand mb-0 h1">iRent Monitor</span>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <div class="row text-center">
+    <div class="col-md-3">
+      <div class="card p-3"><h3>{{ total_props }}</h3>Total Properties</div>
+    </div>
+    <div class="col-md-3">
+      <div class="card p-3"><h3>{{ available }}</h3>Available</div>
+    </div>
+    <div class="col-md-3">
+      <div class="card p-3"><h3>{{ total_users }}</h3>Total Users</div>
+    </div>
+  </div>
+
+  <h4 class="mt-5">Latest 10 Properties</h4>
+  <table class="table table-sm">
+    <thead><tr><th>Title</th><th>Location</th><th>Price</th><th>Owner</th></tr></thead>
+    <tbody>
+      {% for p in recent_props %}
+        <tr>
+          <td>{{ p.title }}</td>
+          <td>{{ p.location }}</td>
+          <td>KES {{ p.price }}</td>
+          <td>{{ p.owner_name }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

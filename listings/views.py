@@ -43,3 +43,16 @@ def landlord_upload(request):
 def property_detail(request, pk):
     prop = Property.objects.get(pk=pk)
     return render(request, 'listings/property_detail.html', {'property': prop})
+
+def monitor(request):
+    from django.contrib.auth.models import User
+    total_props   = Property.objects.count()
+    available     = Property.objects.filter(available=True).count()
+    total_users   = User.objects.count()
+    recent_props  = Property.objects.order_by('-created_at')[:10]
+    return render(request, 'listings/monitor.html', {
+        'total_props': total_props,
+        'available': available,
+        'total_users': total_users,
+        'recent_props': recent_props,
+    })

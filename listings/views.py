@@ -5,6 +5,25 @@ from .models import Property, PropertyImage
 from django.contrib.auth.decorators import login_required
 from accounts.models import Profile
 from django.contrib.auth import logout
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
+
+def contact(request):
+    if request.method == 'POST':
+        name    = request.POST.get('name', '').strip()
+        email   = request.POST.get('email', '').strip()
+        message = request.POST.get('message', '').strip()
+        if name and email and message:
+            # send email to yourself
+            subject = f'iRent ProSpace message from {name}'
+            body    = f'Name: {name}\nEmail: {email}\n\nMessage:\n{message}'
+            send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_FROM_EMAIL])
+            messages.success(request, 'Thank you! Your message has been sent.')
+            return redirect('contact')   # PRG pattern
+        else:
+            messages.error(request, 'Please fill in all fields.')
+    return render(request, 'listings/contact.html')
 
 
 def home(request):
@@ -80,8 +99,40 @@ def my_properties(request):
 
 def about(request):
     return render(request, 'listings/about.html')
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 
 def contact(request):
+    if request.method == 'POST':
+        name    = request.POST.get('name', '').strip()
+        email   = request.POST.get('email', '').strip()
+        message = request.POST.get('message', '').strip()
+        if name and email and message:
+            # send email to yourself
+            subject = f'iRent ProSpace message from {name}'
+            body    = f'Name: {name}\nEmail: {email}\n\nMessage:\n{message}'
+            send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_FROM_EMAIL])
+            messages.success(request, 'Thank you! Your message has been sent.')
+            return redirect('contact')   # PRG pattern
+        else:
+            messages.error(request, 'Please fill in all fields.')
+    return render(request, 'listings/contact.html')
+
+def contact(request):
+    if request.method == 'POST':
+        name    = request.POST.get('name', '').strip()
+        email   = request.POST.get('email', '').strip()
+        message = request.POST.get('message', '').strip()
+        if name and email and message:
+            # send email to yourself
+            subject = f'iRent ProSpace message from {name}'
+            body    = f'Name: {name}\nEmail: {email}\n\nMessage:\n{message}'
+            send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_FROM_EMAIL])
+            messages.success(request, 'Thank you! Your message has been sent.')
+            return redirect('contact')   # PRG pattern
+        else:
+            messages.error(request, 'Please fill in all fields.')
     return render(request, 'listings/contact.html')
 
 

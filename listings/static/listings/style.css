@@ -34,3 +34,21 @@ body {
     border: 1px solid var(--light-border);
     background: #ffffff;
 }
+/* --- cards & grid spacing --- */
+.row.g-3 { row-gap: 1.2rem; }
+.card { border-radius: 6px; overflow: hidden; }
+.card-img-top { height: 180px; object-fit: cover; }
+.card-title { font-size: 1.1rem; font-weight: 600; }
+.card-body { padding: 1rem 1.1rem; }
+.text-muted { color: #666 !important; }
+
+/* --- search bar --- */
+.form-control, .form-select {
+    border: 1px solid var(--light-border);
+    border-radius: 4px;
+}
+.btn {
+    border-radius: 4px;
+    padding: .45rem .9rem;
+    font-weight: 500;
+}

@@ -4,23 +4,29 @@ from .forms import PropertyForm, PropertyImageForm
 from .models import Property, PropertyImage
 from django.contrib.auth.decorators import login_required
 from accounts.models import Profile
+from django.contrib.auth import logout
 
 
 def home(request):
     qs = Property.objects.filter(available=True).order_by('-created_at')
-    location = request.GET.get('location', '')
-    bedrooms = request.GET.get('bedrooms', '')
-    min_price = request.GET.get('min_price', '')
-    max_price = request.GET.get('max_price', '')
+    location   = request.GET.get('location', '')
+    bedrooms   = request.GET.get('bedrooms', '')
+    price_range= request.GET.get('price_range', '')
 
     if location:
         qs = qs.filter(location__icontains=location)
     if bedrooms:
         qs = qs.filter(bedrooms=bedrooms)
-    if min_price:
-        qs = qs.filter(price__gte=min_price)
-    if max_price:
-        qs = qs.filter(price__lte=max_price)
+
+    # price-range quick mapper
+    if price_range == '1-5k':
+        qs = qs.filter(price__gte=1000, price__lte=5000)
+    elif price_range == '5-10k':
+        qs = qs.filter(price__gte=5001, price__lte=10000)
+    elif price_range == '10-20k':
+        qs = qs.filter(price__gte=10001, price__lte=20000)
+    elif price_range == '20k+':
+        qs = qs.filter(price__gte=20001)
 
     context = {
         'properties': qs,
@@ -71,3 +77,15 @@ def my_properties(request):
         return redirect('home')
     props = Property.objects.filter(owner_name=request.user.username).order_by('-created_at')
     return render(request, 'listings/my_properties.html', {'properties': props})
+
+def about(request):
+    return render(request, 'listings/about.html')
+
+def contact(request):
+    return render(request, 'listings/contact.html')
+
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')

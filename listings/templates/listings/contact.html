@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Contact Us – iRent ProSpace</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'listings/style.css' %}">
+  <style>
+    .contact-box { max-width: 600px; margin: 3rem auto; }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-custom">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">iRent ProSpace</a>
+  </div>
+</nav>
+
+<div class="container contact-box">
+  <h2 class="mb-4">Contact Us</h2>
+  <p>We’d love to hear from you. Reach us via any channel below:</p>
+
+  <ul class="list-unstyled mb-4">
+    <li><strong>Email:</strong> irentprospace@gmail.com</li>
+    <li><strong>Phone:</strong> 0113 405 561  |  0745 896 953</li>
+    <li><strong>Operating Hours:</strong> Mon – Sat  08:00 – 18:00 EAT</li>
+  </ul>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Your Name</label>
+      <input type="text" class="form-control" name="name" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" name="email" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Message</label>
+      <textarea class="form-control" rows="4" name="message" required></textarea>
+    </div>
+    <button class="btn btn-accent w-100">Send Message</button>
+  </form>
+</div>
+</body>
+</html>

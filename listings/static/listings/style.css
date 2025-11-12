@@ -1,87 +1,151 @@
-/* ---- iRent ProSpace custom look ---- */
+/* ===== iRent ProSpace – pro B&W v2 ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
-    --primary: #f5f5f5;       /* page background */
-    --accent: #ff6000;        /* orange highlight (change to any colour you like) */
-    --text: #333;
-    --light-border: #e0e0e0;
+    --bg: #fafafa;
+    --paper: #ffffff;
+    --text: #111;
+    --text-soft: #666;
+    --line: #e6e6e6;
+    --accent: #000;
 }
+
+* { box-sizing: border-box; }
 
 body {
-    background: var(--primary);
+    background: var(--bg);
     color: var(--text);
-    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* navbar – flat white with subtle shadow */
+/* navbar – glass border */
 .navbar-custom {
-    background: #ffffff !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    background: rgba(255,255,255,.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,0,0,.06);
+    padding: .5rem 0;
 }
-.navbar-custom .navbar-brand,
-.navbar-custom .btn {
-    color: var(--text) !important;
-}
-.navbar-custom .btn {
+.navbar-brand { font-weight: 700; letter-spacing: -.3px; }
+.navbar .btn {
     background: var(--accent);
-    border: none;
-}
-.navbar-custom .btn:hover {
-    opacity: .9;
-}
-
-/* cards – clean white */
-.card {
-    border: 1px solid var(--light-border);
-    background: #ffffff;
-}
-/* --- cards & grid spacing --- */
-.row.g-3 { row-gap: 1.2rem; }
-.card { border-radius: 6px; overflow: hidden; }
-.card-img-top { height: 180px; object-fit: cover; }
-.card-title { font-size: 1.1rem; font-weight: 600; }
-.card-body { padding: 1rem 1.1rem; }
-.text-muted { color: #666 !important; }
-
-/* --- search bar --- */
-.form-control, .form-select {
-    border: 1px solid var(--light-border);
-    border-radius: 4px;
-}
-.btn {
-    border-radius: 4px;
-    padding: .45rem .9rem;
+    color: #fff;
+    border: 1px solid var(--accent);
+    border-radius: 18px;
+    font-size: .8rem;
     font-weight: 500;
+    padding: .3rem .8rem;
+    transition: all .2s ease;
 }
+.navbar .btn:hover {
+    background: transparent;
+    color: var(--accent);
+    transform: translateY(-1px);
+}
+
+/* cards – glass tile */
+.card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,.06);
+}
+.card-img-top { height: 200px; object-fit: cover; }
+
+/* buttons – hairline black */
 .btn-accent {
     background: var(--accent);
     color: #fff;
-    border: none;
+    border: 1px solid var(--accent);
+    border-radius: 18px;
+    font-weight: 500;
+    font-size: .9rem;
+    padding: .4rem 1rem;
+    transition: all .2s ease;
 }
-.btn-accent:hover { opacity: .9; }
-/* ---------- lively sign-up card ---------- */
+.btn-accent:hover {
+    background: transparent;
+    color: var(--accent);
+    transform: translateY(-2px);
+}
+
+/* forms – soft inner shadow */
+.form-control, .form-select {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: .5rem .75rem;
+    transition: border-color .2s, box-shadow .2s;
+}
+.form-control:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0,0,0,.1);
+}
+
+/* sign card – floating glass */
 .sign-card {
     max-width: 480px;
     margin: 3rem auto;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0,0,0,.08);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
     padding: 2.5rem 3rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,.05);
 }
 .sign-card h2 {
-    font-size: 1.75rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: var(--accent);
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: -.5px;
 }
-.sign-card .form-label {
+.alert { border-radius: 8px; }
+
+/* fade-in cards */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.row > .col-md-4 { animation: fadeIn .45s ease forwards; }
+
+/* ---- oversized pills & chips ---- */
+.price-pill {
+    display: inline-block;
+    border: 1.5px solid #c4c4c4;
+    border-radius: 30px;
+    padding: .7rem 1.4rem;
+    margin: .35rem;
+    font-size: 1rem;
     font-weight: 500;
-    color: #444;
+    cursor: pointer;
+    transition: all .2s ease;
 }
-.sign-card .btn-accent {
-    font-size: 1.05rem;
-    padding: .55rem;
-    border-radius: 8px;
+.price-pill:hover, .price-pill.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    transform: scale(1.03);
 }
-.sign-card .alert {
-    border-radius: 8px;
+
+.chip {
+    display: inline-block;
+    border: 1.5px solid #c4c4c4;
+    border-radius: 26px;
+    padding: .6rem 1.2rem;
+    margin: .3rem;
+    font-size: .95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+.chip:hover, .chip.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    transform: scale(1.03);
+}
+
+/* taller search box */
+.search-bar {
+    padding: 2.5rem 2rem;
 }

@@ -58,3 +58,30 @@ body {
     border: none;
 }
 .btn-accent:hover { opacity: .9; }
+/* ---------- lively sign-up card ---------- */
+.sign-card {
+    max-width: 480px;
+    margin: 3rem auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.08);
+    padding: 2.5rem 3rem;
+}
+.sign-card h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--accent);
+}
+.sign-card .form-label {
+    font-weight: 500;
+    color: #444;
+}
+.sign-card .btn-accent {
+    font-size: 1.05rem;
+    padding: .55rem;
+    border-radius: 8px;
+}
+.sign-card .alert {
+    border-radius: 8px;
+}

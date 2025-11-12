@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .models import Property
 from .forms import PropertyForm, PropertyImageForm
 from .models import Property, PropertyImage
+from django.contrib.auth.decorators import login_required
+from accounts.models import Profile
 
 
 def home(request):
@@ -27,10 +29,15 @@ def home(request):
     return render(request, 'listings/home.html', context)
 
 
+@login_required
 def landlord_upload(request):
+    # if user is not a landlord, boot them out
+    if not Profile.objects.filter(user=request.user, user_type='landlord').exists():
+        return redirect('home')
+    
     if request.method == 'POST':
         p_form = PropertyForm(request.POST)
-        files = request.FILES.getlist('images')   # name="images" from new form
+        files = request.FILES.getlist('images')
         if p_form.is_valid():
             prop = p_form.save()
             for f in files:

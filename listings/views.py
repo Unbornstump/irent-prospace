@@ -22,3 +22,6 @@ def home(request):
         'bedroom_choices': Property.PROPERTY_TYPES,
     }
     return render(request, 'listings/home.html', context)
+
+def landlord_upload(request):
+    return render(request, 'listings/landlord_upload.html', {})

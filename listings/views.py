@@ -63,3 +63,11 @@ def monitor(request):
         'total_users': total_users,
         'recent_props': recent_props,
     })
+
+@login_required
+def my_properties(request):
+    # ensure user is a landlord
+    if not Profile.objects.filter(user=request.user, user_type='landlord').exists():
+        return redirect('home')
+    props = Property.objects.filter(owner_name=request.user.username).order_by('-created_at')
+    return render(request, 'listings/my_properties.html', {'properties': props})

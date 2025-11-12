@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>My Properties – iRent ProSpace</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'listings/style.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-custom">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">iRent ProSpace</a>
+    <div>
+      <a class="btn btn-sm btn-accent" href="{% url 'landlord_upload' %}">+ Add Property</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <h2>My Properties</h2>
+
+  {% if properties %}
+    <div class="row">
+      {% for prop in properties %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            {% if prop.images.first %}
+              <img src="{{ prop.images.first.image.url }}" class="card-img-top" alt="{{ prop.title }}">
+            {% else %}
+              <div class="bg-secondary text-white text-center py-5">No Image</div>
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ prop.title }}</h5>
+              <p class="card-text">
+                <strong>Location:</strong> {{ prop.location }}<br>
+                <strong>Price:</strong> KES {{ prop.price }}<br>
+                <strong>Type:</strong> {{ prop.bedrooms }}
+              </p>
+              <a href="{% url 'property_detail' prop.id %}" class="btn btn-outline-primary btn-sm">View</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">You have not posted any properties yet.</div>
+  {% endif %}
+</div>
+</body>
+</html>

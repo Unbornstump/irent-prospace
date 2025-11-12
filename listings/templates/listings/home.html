@@ -12,8 +12,15 @@
   <div class="container">
     <a class="navbar-brand" href="{% url 'home' %}">iRent ProSpace</a>
     <div>
-      <a class="btn" href="{% url 'landlord_upload' %}">List Your Property</a>
-      <a class="btn btn-sm ms-2" href="{% url 'signup' %}">Sign Up</a>
+      {% if user.is_authenticated %}
+        {% if user.profile.user_type == 'landlord' %}
+          <a class="btn btn-sm btn-accent ms-2" href="{% url 'my_properties' %}">My Properties</a>
+          <a class="btn btn-sm btn-accent ms-2" href="{% url 'landlord_upload' %}">+ Add Property</a>
+        {% endif %}
+        <span class="navbar-text ms-3">Hi {{ user.username }}!</span>
+      {% else %}
+        <a class="btn btn-sm ms-2" href="{% url 'signup' %}">Sign Up</a>
+      {% endif %}
     </div>
   </div>
 </nav>

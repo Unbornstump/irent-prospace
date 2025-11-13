@@ -9,12 +9,68 @@
   <link rel="stylesheet" href="{% static 'listings/style.css' %}">
   <style>
     .hero { background: #fff; padding: 3rem 0 2rem; }
-    .search-bar { background: #ffffff; border: 1px solid #e6e6e6; border-radius: 12px; padding: 1.25rem; box-shadow: 0 4px 16px rgba(0,0,0,.04); }
+    .search-bar { background: #ffffff; border: 1px solid #e6e6e6; border-radius: 12px; padding: 1.25rem; box-shadow: 0 4px 16px rgba(0,0,0,.04); min-height: 100vh; }
     .price-pill { display: inline-block; border: 1px solid #d0d0d0; border-radius: 20px; padding: .35rem .9rem; margin: .25rem; font-size: .8rem; cursor: pointer; transition: all .2s; }
     .price-pill:hover, .price-pill.active { background: #000; color: #fff; border-color: #000; }
     .chip { display: inline-block; border: 1px solid #d0d0d0; border-radius: 18px; padding: .3rem .8rem; margin: .2rem; font-size: .75rem; cursor: pointer; transition: all .2s; }
     .chip:hover, .chip.active { background: #000; color: #fff; border-color: #000; }
     .results-scroll { min-height: 100vh; }
+    /* ===== bigger pills / chips ===== */
+.price-pill,
+.chip {
+    font-size: 1rem;
+    padding: 0.8rem 1.6rem;
+    border-radius: 30px;
+    margin: 0.4rem 0.3rem;          /* generous gaps */
+    display: inline-flex;           /* keeps vertical center */
+    align-items: center;
+    transition: transform .2s ease, background .2s ease, color .2s ease;
+}
+
+.price-pill:hover,
+.chip:hover,
+.price-pill.active,
+.chip.active {
+    transform: scale(1.08);         /* subtle pop */
+}
+.filter-label {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-top: 1rem;   /* push down a little */
+    display: inline-block;
+}
+.form-control,
+.form-select {
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    height: auto;          /* let padding decide height */
+}
+/* ===== bigger pills / chips ===== */
+.price-pill,
+.chip {
+    font-size: 1rem;
+    padding: 0.8rem 1.6rem;
+    border-radius: 30px;
+    margin: 0.4rem 0.3rem;
+    display: inline-flex;
+    align-items: center;
+    transition: transform .2s ease, background .2s ease, color .2s ease;
+}
+
+.price-pill:hover,
+.chip:hover,
+.price-pill.active,
+.chip.active {
+    transform: scale(1.08);
+}
+
+/* === selected border  === */
+.price-pill.active,
+.chip.active {
+    border: 2px solid #000 !important;
+    background: transparent !important;
+    color: #000 !important;
+}
   </style>
 </head>
 <body>
@@ -70,13 +126,16 @@
     <!-- DUAL-BUTTON ROW -->
     <div class="d-flex justify-content-center gap-3 mb-5">
       <!-- Button 1: Dream Home (no filters) -->
-      <a href="?show=all" class="btn btn-outline-dark btn-lg px-4">Find your dream home</a>
+      <a href="?show=all#results" class="btn btn-outline-dark btn-lg px-4">Find your dream home</a>
       <!-- Button 2: Scroll to criteria -->
-      <button class="btn btn-accent btn-lg px-4" onclick="document.querySelector('.search-bar').scrollIntoView({behavior:'smooth'})">Choose criteria</button>
+      <button class="btn btn-accent btn-lg px-4"
+        onclick="document.getElementById('filters').scrollIntoView({behavior:'smooth', block:'start'})">
+    Choose criteria
+</button>
     </div>
 
     <!-- FULL-WIDTH FILTER PAD -->
-    <form method="get" class="search-bar" style="padding: 3rem 1.5rem; max-width: 100%;" onsubmit="scrollToResults()">
+    <form method="get" id="filters" class="search-bar" style="padding: 12vh 2rem; min-height: 100vh;">
       <!-- Row 1: Location + Bedrooms + Price (smaller boxes) -->
       <div class="row g-3 mb-4 justify-content-center">
         <div class="col-md-3">
@@ -87,23 +146,23 @@
                  placeholder="Search by location"
                  value="{{ request.GET.location }}"
                  autocomplete="off"
-                 spellcheck="false">
+                 spellcheck="false" required>
         </div>
         <div class="col-md-2">
-          <select class="form-select form-select-sm" name="bedrooms">
+          <select class="form-select form-select-sm" name="bedrooms" required >
             {% for val, label in bedroom_choices %}
               <option value="{{ val }}" {% if request.GET.bedrooms == val %}selected{% elif not request.GET.bedrooms and val == 'Single Room' %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
           </select>
         </div>
         <div class="col-md-2">
-          <input class="form-control form-control-sm" type="number" name="price" placeholder="Price (KES)" min="0" value="{{ request.GET.price }}">
+          <input class="form-control form-control-sm" type="number" name="price" placeholder="Enter price" placeholder="Price (KES)" min="0" value="{{ request.GET.price }}" required >
         </div>
       </div>
 
       <!-- Row 2: Price Pills -->
-      <div class="mb-3">
-        <small class="text-muted me-3">Filter by budget:</small>
+      <div class="mb-3 d-flex flex-wrap justify-content-center">
+        <small class="text-muted filter-label">Filter by budget:</small>
         <span class="price-pill" data-val="1-5k">KES 1 – 5 k</span>
         <span class="price-pill" data-val="5-10k">KES 5 – 10 k</span>
         <span class="price-pill" data-val="10-20k">KES 10 – 20 k</span>
@@ -111,17 +170,24 @@
       </div>
 
       <!-- Row 3: Bedroom Chips -->
-      <div class="mb-4">
-        <small class="text-muted me-3">Preferred bedrooms:</small>
-        {% for val, label in bedroom_choices %}
-          <span class="chip" data-bed="{{ val }}">{{ label }}</span>
-        {% endfor %}
+      <div class="mb-4 d-flex flex-wrap justify-content-center">
+        <small class="text-muted filter-label">Preferred bedrooms:</small>
+         {% for val, label in bedroom_choices %}
+            <span class="chip" data-bed="{{ val }}">{{ label }}</span>
+         {% endfor %}
       </div>
 
       <!-- Row 4: Full-width Search Button -->
-      <div class="d-flex justify-content-center">
-        <button class="btn btn-accent px-5" style="width: 50%; max-width: 600px;">Search</button>
-      </div>
+      <!-- spacer pushes button to bottom -->
+<div class="d-flex flex-column justify-content-between" style="min-height: 18vh;">
+  <div></div> <!-- empty top cell -->
+  <div class="d-flex justify-content-center">
+    <button class="btn btn-accent px-5"
+            style="width: 60%; max-width: 600px; padding: 0.8rem 1rem; font-size: 1.2rem;">
+      Search
+    </button>
+  </div>
+</div>
     </form>
 
     <!-- Separator Title -->
@@ -139,8 +205,31 @@ function scrollToResults() {
 </script>
 {% endif %}
 
+{% if search_location or search_bedrooms or search_price %}
+  {% if mode == 'near' %}
+    <div class="alert alert-warning alert-dismissible fade show text-center fw-600 fs-5 mb-4" role="alert">
+      No exact <strong>{{ search_bedrooms }}</strong> rentals in <strong>{{ search_location }}</strong> around KES {{ search_price }}.
+      <br><small class="fs-6">Showing similar rooms in the same location.</small>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% elif mode == 'location' %}
+    <div class="alert alert-warning alert-dismissible fade show text-center fw-600 fs-5 mb-4" role="alert">
+      No <strong>{{ search_bedrooms }}</strong> rentals in <strong>{{ search_location }}</strong>.
+      <br><small class="fs-6">Showing other available units in that area.</small>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% elif mode == 'none' %}
+    <div class="alert alert-danger alert-dismissible fade show text-center fw-600 fs-5 mb-4" role="alert">
+      No rentals found in <strong>{{ search_location }}</strong>.
+      <br>
+      <a href="?show=all#results" class="alert-link">Browse all listings</a>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endif %}
+{% endif %}
+
 <!-- RESULTS (always shown) -->
-<section class="results-scroll py-5">
+<section id="results" class="results-scroll py-5">
   <div class="container">
     <div class="row g-4">
       {% for prop in properties %}
@@ -168,28 +257,99 @@ function scrollToResults() {
     </div>
   </div>
 </section>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-/* sync pills/chips with form fields */
-document.querySelectorAll('.price-pill').forEach(p => {
-  p.addEventListener('click', () => {
-    document.querySelector('input[name="price"]').value = '';
-    document.querySelector('select[name="price_range"]').value = p.dataset.val;
-    p.form.submit();
+/* ---- pills / chips -> sync boxes + border ---- */
+document.querySelectorAll('.price-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.price-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    const val = pill.dataset.val;
+    document.querySelector('input[name="price"]').value =
+      val === '1-5k'   ? '5000'
+    : val === '5-10k'  ? '10000'
+    : val === '10-20k' ? '20000'
+    : val === '20k+'   ? '25000'
+    : '';
   });
 });
-document.querySelectorAll('.chip').forEach(c => {
-  c.addEventListener('click', () => {
-    document.querySelector('select[name="bedrooms"]').value = c.dataset.bed;
-    c.form.submit();
+
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    document.querySelector('select[name="bedrooms"]').value = chip.dataset.bed;
   });
 });
-</script>
-<script>
-/* Nominatim autosuggest – throttled, styled */
+
+/* ---- manual box change -> move border ---- */
+const priceInput = document.querySelector('input[name="price"]');
+if (priceInput) {
+  priceInput.addEventListener('input', () => {
+    const val = Number(priceInput.value) || 0;
+    document.querySelectorAll('.price-pill').forEach(p => p.classList.remove('active'));
+    let target = '';
+    if (val >= 1000 && val <= 5000)   target = '1-5k';
+    if (val >= 5001 && val <= 10000)  target = '5-10k';
+    if (val >= 10001 && val <= 20000) target = '10-20k';
+    if (val >= 20001)                 target = '20k+';
+    document.querySelector(`.price-pill[data-val="${target}"]`)?.classList.add('active');
+  });
+}
+
+const bedSelect = document.querySelector('select[name="bedrooms"]');
+if (bedSelect) {
+  bedSelect.addEventListener('change', () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    document.querySelector(`.chip[data-bed="${bedSelect.value}"]`)?.classList.add('active');
+  });
+}
+
+/* ---- require all fields ---- */
+document.querySelector('#filters').addEventListener('submit', function (e) {
+  const loc  = this.location.value.trim();
+  const bed  = this.bedrooms.value;
+  const pr   = this.price.value;
+  if (!loc || !bed || !pr) {
+    e.preventDefault();
+    alert('Please fill Location, Bedrooms and Price.');
+    return;
+  }
+});
+
+/* ---- AJAX search (no page reload, no jump) ---- */
+document.querySelector('#filters').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form   = e.target;
+  const url    = new URL(window.location);
+  const params = new URLSearchParams(new FormData(form));
+  for (const [k,v] of params) url.searchParams.set(k,v);
+
+  /* update URL bar without reload */
+  window.history.replaceState({}, '', url);
+
+  /* fetch new results HTML */
+  try{
+    const res  = await fetch(url.href);
+    const html = await res.text();
+
+    /* extract only the new #results block */
+    const newDoc    = new DOMParser().parseFromString(html, 'text/html');
+    const newResults= newDoc.querySelector('#results');
+    document.querySelector('#results').replaceWith(newResults);
+
+    /* smooth scroll to results */
+    document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+  }catch(err){
+    console.error('Search failed', err);
+    alert('Search failed. Please try again.');
+  }
+});
+
+/* ---- faster Nominatim + short names ---- */
 const locationInput = document.getElementById('location-input');
-const suggestBox = document.createElement('div');
+const suggestBox    = document.createElement('div');
 suggestBox.className = 'position-absolute w-100 mt-1';
 suggestBox.style.zIndex = '1050';
 suggestBox.style.maxHeight = '200px';
@@ -200,46 +360,57 @@ suggestBox.style.background = '#fff';
 locationInput.parentElement.style.position = 'relative';
 locationInput.parentElement.appendChild(suggestBox);
 
-let lastQuery = '';
-let lastCall = 0;
-const throttle = 1000; // 1 second
+let controller, lastQuery = '', lastCall = 0;
+const throttle = 600; // ms
 
 locationInput.addEventListener('input', async () => {
   const query = locationInput.value.trim();
-  if (query.length < 2) { suggestBox.innerHTML = ''; return; }
+  if (query.length < 2){ suggestBox.innerHTML = ''; return; }
   if (query === lastQuery) return;
   lastQuery = query;
-
   const now = Date.now();
   if (now - lastCall < throttle) return;
   lastCall = now;
+  if (controller) controller.abort();
+  controller = new AbortController();
 
-  suggestBox.innerHTML = ''; // clear old
-
-  try {
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&countrycodes=ke&limit=5`;
-    const res = await fetch(url);
+  try{
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&countrycodes=ke&limit=3`,
+      { signal: controller.signal, cache: 'no-store' }
+    );
     const data = await res.json();
+    suggestBox.innerHTML = '';
     data.forEach(item => {
-      const choice = document.createElement('button');
-      choice.type = 'button';
-      choice.className = 'list-group-item list-group-item-action border-0 py-2';
-      choice.style.textAlign = 'left';
-      choice.textContent = item.display_name;
-      choice.addEventListener('click', () => {
-        locationInput.value = item.display_name;
-        suggestBox.innerHTML = '';
-      });
-      suggestBox.appendChild(choice);
+      const short = item.display_name.split(',')[0];
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'list-group-item list-group-item-action border-0 py-2';
+      btn.style.textAlign = 'left';
+      btn.textContent = short;
+      btn.onclick = () => { locationInput.value = short; suggestBox.innerHTML = ''; };
+      suggestBox.appendChild(btn);
     });
-  } catch (e) {
-    console.warn('Nominatim error', e);
-  }
+  }catch(e){ if (e.name !== 'AbortError') console.warn('Nominatim error', e); }
 });
 
 document.addEventListener('click', e => {
   if (!suggestBox.contains(e.target) && e.target !== locationInput) suggestBox.innerHTML = '';
 });
+
+/* ---- block Enter inside filter ---- */
+document.getElementById('filters').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') {
+    e.preventDefault();
+    document.querySelector('button[type="submit"]').click();
+  }
+});
+
+/* ---- fire borders on load ---- */
+priceInput?.dispatchEvent(new Event('input'));
+bedSelect?.dispatchEvent(new Event('change'));
 </script>
+</body>
+</html>
 </body>
 </html>

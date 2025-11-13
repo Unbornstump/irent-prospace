@@ -9,6 +9,8 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
+from listings.utils import resize_image
+from django.db.models import Q
 
 def contact(request):
     if request.method == 'POST':
@@ -28,56 +30,87 @@ def contact(request):
 
 
 def home(request):
-    # 1. dream-home button bypass
-    if request.GET.get('show') == 'all':
-        qs = Property.objects.filter(available=True).order_by('-created_at')
-        context = {
-            'properties': qs,
-            'bedroom_choices': Property.PROPERTY_TYPES,
-            'is_landlord': False,  # force tenant view
-        }
-        return render(request, 'listings/home.html', context)
-
-    
-    # 1. safe landlord check: create temp profile only if missing, then delete if tenant-default
+    # 1. landlord flag
     is_landlord = False
     if request.user.is_authenticated:
-        profile, created = Profile.objects.get_or_create(user=request.user, defaults={'user_type': 'tenant'})
-        is_landlord = profile.user_type == 'landlord'
-        if created and not is_landlord:   # we just made a temp tenant profile → delete it
-            profile.delete()
+        prof, _ = Profile.objects.get_or_create(user=request.user, defaults={'user_type': 'tenant'})
+        is_landlord = prof.user_type == 'landlord'
 
-    # 2. normal search logic
-    qs = Property.objects.filter(available=True).order_by('-created_at')
-    location   = request.GET.get('location', '')
-    bedrooms   = request.GET.get('bedrooms', '')
-    price_range= request.GET.get('price_range', '')
+    # 2. base queryset
+    qs = Property.objects.filter(available=True)
 
-    if location:
-        qs = qs.filter(location__icontains=location)
-    if bedrooms:
-        qs = qs.filter(bedrooms=bedrooms)
+    # 3. mandatory filters
+    location = request.GET.get('location', '').strip()
+    bedrooms = request.GET.get('bedrooms', '')
+    price    = request.GET.get('price', '')          # raw number
 
-    if price_range == '1-5k':
-        qs = qs.filter(price__gte=1000, price__lte=5000)
-    elif price_range == '5-10k':
-        qs = qs.filter(price__gte=5001, price__lte=10000)
-    elif price_range == '10-20k':
-        qs = qs.filter(price__gte=10001, price__lte=20000)
-    elif price_range == '20k+':
-        qs = qs.filter(price__gte=20001)
+    if not (location and bedrooms and price):
+        # empty or partial search -> show all
+        return render(request, 'listings/home.html', {
+            'properties': qs.order_by('-created_at'),
+            'bedroom_choices': Property.PROPERTY_TYPES,
+            'is_landlord': is_landlord,
+        })
 
-    # 3. context
-    context = {
-        'properties': qs,
+    # 4. exact match  (location + bedrooms + price-band)
+    try:
+        price_int = int(price)
+    except ValueError:
+        price_int = 0
+    band_Q = Q()
+    if 1000 <= price_int <= 5000:   band_Q = Q(price__gte=1000, price__lte=5000)
+    elif 5001 <= price_int <= 10000:  band_Q = Q(price__gte=5001, price__lte=10000)
+    elif 10001 <= price_int <= 20000: band_Q = Q(price__gte=10001, price__lte=20000)
+    elif price_int >= 20001:          band_Q = Q(price__gte=20001)
+
+    exact = qs.filter(
+        Q(location__icontains=location) &
+        Q(bedrooms=bedrooms) &
+        band_Q
+    )
+
+    # 5. near-match (same location + bedrooms, any price)
+    near = qs.filter(
+        Q(location__icontains=location) &
+        Q(bedrooms=bedrooms)
+    ).exclude(pk__in=exact) if exact.exists() else qs.filter(
+        Q(location__icontains=location) &
+        Q(bedrooms=bedrooms)
+    )
+
+    # 6. location-only
+    location_only = qs.filter(
+        location__icontains=location
+    ).exclude(pk__in=exact).exclude(pk__in=near) if exact.exists() or near.exists() else qs.filter(
+        location__icontains=location
+    )
+
+    # 7. decide what to show
+    if exact.exists():
+        show_qs = exact
+        mode = 'exact'
+    elif near.exists():
+        show_qs = near
+        mode = 'near'
+    elif location_only.exists():
+        show_qs = location_only
+        mode = 'location'
+    else:
+        show_qs = Property.objects.none()
+        mode = 'none'
+
+    return render(request, 'listings/home.html', {
+        'properties': show_qs.order_by('-created_at'),
         'bedroom_choices': Property.PROPERTY_TYPES,
         'is_landlord': is_landlord,
-    }
-    return render(request, 'listings/home.html', context)
+        'mode': mode,               # template uses this to print helper text
+        'search_location': location,
+        'search_bedrooms': bedrooms,
+        'search_price': price,
+    })
 
 @login_required
 def landlord_upload(request):
-    # if user is not a landlord, boot them out
     if not Profile.objects.filter(user=request.user, user_type='landlord').exists():
         return redirect('home')
     
@@ -86,18 +119,15 @@ def landlord_upload(request):
         files = request.FILES.getlist('images')
         if p_form.is_valid():
             prop = p_form.save(commit=False)
-            prop.owner_name = request.user.username   # force correct owner
+            prop.owner_name = request.user.username
             prop.save()
             for f in files:
-                PropertyImage.objects.create(property=prop, image=f)
+                resized = resize_image(f)
+                PropertyImage.objects.create(property=prop, image=resized)
             return redirect('home')
     else:
         p_form = PropertyForm()
     return render(request, 'listings/landlord_upload.html', {'form': p_form})
-
-def property_detail(request, pk):
-    prop = Property.objects.get(pk=pk)
-    return render(request, 'listings/property_detail.html', {'property': prop})
 
 def monitor(request):
     from django.contrib.auth.models import User
@@ -190,3 +220,7 @@ def about(request):
 
 def contact(request):
     return render(request, 'listings/contact.html')
+
+def property_detail(request, pk):
+    prop = get_object_or_404(Property, pk=pk)
+    return render(request, 'listings/property_detail.html', {'property': prop})

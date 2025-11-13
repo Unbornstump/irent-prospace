@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from .models import Property
 from .forms import PropertyForm, PropertyImageForm
@@ -27,6 +28,15 @@ def contact(request):
 
 
 def home(request):
+    # 1. safe landlord check: create temp profile only if missing, then delete if tenant-default
+    is_landlord = False
+    if request.user.is_authenticated:
+        profile, created = Profile.objects.get_or_create(user=request.user, defaults={'user_type': 'tenant'})
+        is_landlord = profile.user_type == 'landlord'
+        if created and not is_landlord:   # we just made a temp tenant profile → delete it
+            profile.delete()
+
+    # 2. normal search logic
     qs = Property.objects.filter(available=True).order_by('-created_at')
     location   = request.GET.get('location', '')
     bedrooms   = request.GET.get('bedrooms', '')
@@ -37,7 +47,6 @@ def home(request):
     if bedrooms:
         qs = qs.filter(bedrooms=bedrooms)
 
-    # price-range quick mapper
     if price_range == '1-5k':
         qs = qs.filter(price__gte=1000, price__lte=5000)
     elif price_range == '5-10k':
@@ -47,12 +56,13 @@ def home(request):
     elif price_range == '20k+':
         qs = qs.filter(price__gte=20001)
 
+    # 3. context
     context = {
         'properties': qs,
         'bedroom_choices': Property.PROPERTY_TYPES,
+        'is_landlord': is_landlord,
     }
     return render(request, 'listings/home.html', context)
-
 
 @login_required
 def landlord_upload(request):
@@ -64,7 +74,9 @@ def landlord_upload(request):
         p_form = PropertyForm(request.POST)
         files = request.FILES.getlist('images')
         if p_form.is_valid():
-            prop = p_form.save()
+            prop = p_form.save(commit=False)
+            prop.owner_name = request.user.username   # force correct owner
+            prop.save()
             for f in files:
                 PropertyImage.objects.create(property=prop, image=f)
             return redirect('home')
@@ -91,17 +103,10 @@ def monitor(request):
 
 @login_required
 def my_properties(request):
-    # ensure user is a landlord
     if not Profile.objects.filter(user=request.user, user_type='landlord').exists():
         return redirect('home')
     props = Property.objects.filter(owner_name=request.user.username).order_by('-created_at')
     return render(request, 'listings/my_properties.html', {'properties': props})
-
-def about(request):
-    return render(request, 'listings/about.html')
-from django.contrib import messages
-from django.core.mail import send_mail
-from django.conf import settings
 
 def contact(request):
     if request.method == 'POST':
@@ -140,3 +145,37 @@ def contact(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+@login_required
+def edit_property(request, pk):
+    prop = get_object_or_404(Property, pk=pk, owner_name=request.user.username)  # owner only
+    if request.method == 'POST':
+        form = PropertyForm(request.POST, instance=prop)
+        files = request.FILES.getlist('images')
+        if form.is_valid():
+            form.save()
+            # replace images if new ones uploaded
+            if files:
+                prop.images.all().delete()
+                for f in files:
+                    PropertyImage.objects.create(property=prop, image=f)
+            messages.success(request, 'Listing updated successfully.')
+            return redirect('my_properties')
+    else:
+        form = PropertyForm(instance=prop)
+    return render(request, 'listings/edit_property.html', {'form': form, 'prop': prop})
+
+@login_required
+def delete_property(request, pk):
+    prop = get_object_or_404(Property, pk=pk, owner_name=request.user.username)
+    if request.method == 'POST':
+        prop.delete()
+        messages.success(request, 'Listing deleted.')
+        return redirect('my_properties')
+    return render(request, 'listings/delete_confirm.html', {'prop': prop})
+
+def about(request):
+    return render(request, 'listings/about.html')
+
+def contact(request):
+    return render(request, 'listings/contact.html')

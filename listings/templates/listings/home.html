@@ -18,32 +18,40 @@
   </style>
 </head>
 <body>
-  <!-- MINIMAL HEADER -->
-<nav class="navbar navbar-custom sticky-top">
+<!-- MINIMAL HEADER -->
+<nav class="navbar navbar-custom">
   <div class="container d-flex justify-content-between align-items-center">
-    <a class="navbar-brand fw-700" href="{% url 'home' %}" style="letter-spacing:-.5px;">iRent ProSpace</a>
+    <div class="d-flex align-items-center gap-2">
+      <a class="navbar-brand fw-700" href="{% url 'home' %}">iRent ProSpace</a>
+      {% if user.is_authenticated %}
+        <span class="navbar-text fw-600">Hi {{ user.username }}!</span>
+      {% endif %}
+    </div>
     <div class="d-flex gap-2">
       <a class="btn btn-sm" href="{% url 'about' %}">About</a>
-      <a class="btn btn-sm" href="{% url 'contact' %}">Contact</a>
+      <a class="btn btn-sm" href="{% url 'contact' %}">Contact Us</a>
       {% if user.is_authenticated %}
-        <a class="btn btn-sm btn-accent" href="{% url 'my_properties' %}">My Properties</a>
-        <a class="btn btn-sm btn-accent" href="{% url 'landlord_upload' %}">Add Property</a>
+        {% if user.profile.user_type == 'landlord' %}
+          <a class="btn btn-sm btn-accent" href="{% url 'my_properties' %}">My Properties</a>
+          <a class="btn btn-sm btn-accent" href="{% url 'landlord_upload' %}">Add Property</a>
+        {% endif %}
         <a class="btn btn-sm" href="{% url 'logout' %}">Logout</a>
       {% else %}
         <a class="btn btn-sm" href="{% url 'signup' %}">Sign Up</a>
+        <a class="btn btn-sm" href="{% url 'user_login' %}">Log In</a>
       {% endif %}
     </div>
   </div>
 </nav>
 
-<!-- HERO -->
+<!-- HERO / SEARCH  (ONLY ON HOME) -->
+{% if not is_landlord %}
 <section class="hero">
   <div class="container text-center">
     <h1 class="fw-700 mb-3">Find what fits you</h1>
 
-    <!-- SEARCH WRAPPER – taller -->
+    <!-- SEARCH BAR -->
     <form method="get" class="search-bar">
-      <!-- Row 1: Location + Bedrooms + Price -->
       <div class="row g-3 mb-4">
         <div class="col-md-4">
           <input class="form-control form-control-lg" type="text" name="location" placeholder="Search by location" value="{{ request.GET.location }}">
@@ -58,10 +66,12 @@
         <div class="col-md-3">
           <input class="form-control form-control-lg" type="number" name="price" placeholder="Price (KES)" min="0" value="{{ request.GET.price }}">
         </div>
-        <!-- Empty column so Search button sits on next row -->
+        <div class="col-md-2">
+          <button class="btn btn-accent btn-lg w-100">Search</button>
+        </div>
       </div>
 
-      <!-- Row 2: Price Pills -->
+      <!-- PRICE PILLS -->
       <div class="mb-4">
         <small class="text-muted me-3">Filter by budget:</small>
         <span class="price-pill" data-val="1-5k">KES 1 – 5 k</span>
@@ -70,23 +80,19 @@
         <span class="price-pill" data-val="20k+">KES 20 k+</span>
       </div>
 
-      <!-- Row 3: Bedroom Chips -->
+      <!-- BEDROOM CHIPS -->
       <div class="mb-4">
         <small class="text-muted me-3">Preferred bedrooms:</small>
         {% for val, label in bedroom_choices %}
           <span class="chip" data-bed="{{ val }}">{{ label }}</span>
         {% endfor %}
       </div>
-
-      <!-- Row 4: Search Button (bottom) -->
-      <div class="d-flex justify-content-center">
-        <button class="btn btn-accent btn-lg px-5">Search</button>
-      </div>
     </form>
   </div>
 </section>
+{% endif %}
 
-<!-- RESULTS (infinite scroll area) -->
+<!-- RESULTS (always shown) -->
 <section class="results-scroll py-5">
   <div class="container">
     <div class="row g-4">

@@ -35,11 +35,11 @@
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button class="btn btn-accent w-100">Sign Up</button>
+      <button class="btn btn-accent w-100">Sign Up</button>
   </form>
 
   <p class="text-center mt-3">
-    Already have an account? <a href="{% url 'admin:login' %}">Log in (admin)</a>
+    Already have an account? <a href="{% url 'user_login' %}">Log in</a>
   </p>
 </div>
 </body>

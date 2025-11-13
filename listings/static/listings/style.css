@@ -149,3 +149,10 @@ body {
 .search-bar {
     padding: 2.5rem 2rem;
 }
+/* prominent welcome */
+.navbar-text {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #000;
+    letter-spacing: -.3px;
+}

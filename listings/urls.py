@@ -10,4 +10,6 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
     path('logout/', views.logout_view, name='logout'),
+    path('property/<int:pk>/edit/', views.edit_property, name='edit_property'),
+    path('property/<int:pk>/delete/', views.delete_property, name='delete_property'),
 ]

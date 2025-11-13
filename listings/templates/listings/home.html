@@ -71,6 +71,20 @@
     background: transparent !important;
     color: #000 !important;
 }
+
+/* ---- hover-zoom buttons ---- */
+.hover-btn {
+  transition: transform .2s ease, background .2s ease, color .2s ease;
+  border: 2px solid transparent;
+}
+.hover-btn:hover {
+  transform: scale(1.05);
+  background: transparent !important;
+  color: #000 !important;
+  border-color: #000 !important;
+}
+.btn-outline-dark.hover-btn { border-color: #000; }
+.btn-accent.hover-btn       { border-color: #000; }
   </style>
 </head>
 <body>
@@ -123,15 +137,16 @@
     <!-- Big “Find what fits you” -->
     <h1 class="fw-700 mb-5" style="font-size: 4rem; letter-spacing: -1px;">Find what fits you</h1>
 
-    <!-- DUAL-BUTTON ROW -->
-    <div class="d-flex justify-content-center gap-3 mb-5">
-      <!-- Button 1: Dream Home (no filters) -->
-      <a href="?show=all#results" class="btn btn-outline-dark btn-lg px-4">Find your dream home</a>
-      <!-- Button 2: Scroll to criteria -->
-      <button class="btn btn-accent btn-lg px-4"
-        onclick="document.getElementById('filters').scrollIntoView({behavior:'smooth', block:'start'})">
-    Choose criteria
-</button>
+      <!-- STACKED HOVER-ZOOM BUTTONS -->
+    <div class="d-flex flex-column align-items-center gap-3 mb-5">
+      <a href="?show=all#results"
+         class="btn btn-outline-dark btn-lg px-4 hover-btn">
+        See all available rentals
+      </a>
+      <button class="btn btn-accent btn-lg px-4 hover-btn"
+              onclick="document.getElementById('filters').scrollIntoView({behavior:'smooth', block:'start'})">
+        Pick what fits you
+      </button>
     </div>
 
     <!-- FULL-WIDTH FILTER PAD -->
@@ -227,6 +242,82 @@ function scrollToResults() {
     </div>
   {% endif %}
 {% endif %}
+
+<!-- AI close-match helper -->
+<div class="alert alert-info border-0 text-dark fw-500 fs-5 mb-4">
+  <div class="d-flex align-items-center mb-2"><span class="me-2">🤖</span><strong>No exact match for your filters?</strong></div>
+  <p class="mb-1">
+    {% if mode == 'near' %}
+      I couldn’t find a <strong>{{ search_bedrooms }}</strong> in <strong>{{ search_location }}</strong> around <strong>KES {{ search_price }}</strong>.
+      Here are similar rooms in the same area.
+    {% elif mode == 'location' %}
+      No <strong>{{ search_bedrooms }}</strong> rentals in <strong>{{ search_location }}</strong> right now.
+      Showing other available units in that location – same area, different rooms or price.
+    {% elif mode == 'none' %}
+      Zero listings in <strong>{{ search_location }}</strong> at the moment.
+      Broadening search to nearby places or all bedrooms – scroll to see what’s close.
+    {% endif %}
+  </p>
+  <small class="text-muted">Tip: clear filters or adjust price/rooms to see more options.</small>
+</div>
+
+<!-- AI price-band mismatch (always show if searched & price off) -->
+{% if search_location and search_price %}
+  {% with price_val=search_price|add:0 %}
+    {% if price_val < 1000 or price_val > 20000 or price_val == 5049 %}
+      <div class="alert alert-warning border-0 text-dark fw-500 fs-5 mb-4">
+        <div class="d-flex align-items-center mb-2">
+          <span class="me-2">🤖</span>
+          <strong>Price out of common bands?</strong>
+        </div>
+        <p class="mb-1">
+          You entered <strong>KES {{ search_price }}</strong> – no exact match in our bands.
+          Showing all rentals in <strong>{{ search_location }}</strong> instead; pick a band above for tighter results.
+        </p>
+        <small class="text-muted">Tip: use the price pills for instant filtering.</small>
+      </div>
+    {% endif %}
+  {% endwith %}
+{% endif %}
+
+
+<!-- ===== SMART AI HELPER (inserted above #results) ===== -->
+{% if search_location or search_bedrooms or search_price %}
+<script>
+/* helper: generate smart retry buttons */
+function smartSuggestions(){
+  const loc  = '{{ search_location|escapejs }}';
+  const bed  = '{{ search_bedrooms|escapejs }}';
+  const pr   = '{{ search_price|escapejs }}';
+  const band = pr >= 20001 ? '20k+' : pr >= 10001 ? '10-20k' : pr >= 5001 ? '5-10k' : pr >= 1000 ? '1-5k' : 'any';
+
+  const sug = [];
+  /* 1. same location, any bedroom */
+  sug.push({txt:`All rooms in ${loc}`, url:`?location=${encodeURIComponent(loc)}&show=all#results`});
+  /* 2. same bedroom, any location */
+  sug.push({txt:`Any ${bed} rental`,  url:`?bedrooms=${encodeURIComponent(bed)}&show=all#results`});
+  /* 3. same location, same room, next price band */
+  const nextBand = band === '1-5k' ? '5-10k' : band === '5-10k' ? '10-20k' : band === '10-20k' ? '20k+' : '';
+  if (nextBand) sug.push({txt:`${bed} in ${loc} (KES ${nextBand})`, url:`?location=${encodeURIComponent(loc)}&bedrooms=${encodeURIComponent(bed)}&price_range=${nextBand}#results`});
+  return sug;
+}
+</script>
+
+<div class="alert alert-primary border-0 text-dark fw-500 fs-5 mb-4">
+  <div class="d-flex align-items-center mb-2"><span class="me-2">🤖</span><strong>Smart suggestions for you</strong></div>
+  <p class="mb-2">
+    {% if mode == 'none' %}Zero listings match every filter. Try these instead:{% else %}Tight criteria! Loosen one filter for more choices:{% endif %}
+  </p>
+  <div class="d-flex flex-wrap gap-2 mb-2">
+    {% for s in smartSuggestions %}
+      <a href="{{ s.url }}" class="btn btn-sm btn-outline-primary">{{ s.txt }}</a>
+    {% endfor %}
+  </div>
+  <small class="text-muted">Click any button – results appear instantly.</small>
+</div>
+{% endif %}
+<!-- ===== END SMART AI ===== -->
+
 
 <!-- RESULTS (always shown) -->
 <section id="results" class="results-scroll py-5">
@@ -413,4 +504,4 @@ bedSelect?.dispatchEvent(new Event('change'));
 </body>
 </html>
 </body>
-</html>
+</html> 

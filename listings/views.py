@@ -28,6 +28,17 @@ def contact(request):
 
 
 def home(request):
+    # 1. dream-home button bypass
+    if request.GET.get('show') == 'all':
+        qs = Property.objects.filter(available=True).order_by('-created_at')
+        context = {
+            'properties': qs,
+            'bedroom_choices': Property.PROPERTY_TYPES,
+            'is_landlord': False,  # force tenant view
+        }
+        return render(request, 'listings/home.html', context)
+
+    
     # 1. safe landlord check: create temp profile only if missing, then delete if tenant-default
     is_landlord = False
     if request.user.is_authenticated:

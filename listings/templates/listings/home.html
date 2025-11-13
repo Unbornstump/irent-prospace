@@ -44,35 +44,65 @@
   </div>
 </nav>
 
-<!-- HERO / SEARCH  (ONLY ON HOME) -->
+<!-- HERO (tenants / anonymous only) -->
 {% if not is_landlord %}
-<section class="hero">
-  <div class="container text-center">
-    <h1 class="fw-700 mb-3">Find what fits you</h1>
+<!-- Google Inter font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- SEARCH BAR -->
-    <form method="get" class="search-bar">
-      <div class="row g-3 mb-4">
-        <div class="col-md-4">
-          <input class="form-control form-control-lg" type="text" name="location" placeholder="Search by location" value="{{ request.GET.location }}">
-        </div>
+<section class="hero" style="font-family: 'Inter', sans-serif; padding-top: 4rem;">
+  <div class="container text-center">
+
+    <!-- Exact screenshot headline -->
+    
+<!-- 7 rem lighter exact-screenshot headline -->
+<h2 style="margin: 0; font-size: 7rem; font-weight: 400; letter-spacing: -0.04em; line-height: 1;">Find Your Perfect</h2>
+<h2 style="margin: 0; font-size: 7rem; font-weight: 400; letter-spacing: -0.04em; line-height: 1;">Rental-Where</h2>
+<h2 style="margin: 0 0 0.5rem 0; font-size: 7rem; font-weight: 300; letter-spacing: -0.04em; line-height: 1;">Dreams Meet Reality</h2>
+
+ <div style="height: 1.2rem; background: transparent;"></div>
+
+    <!-- Smooth separator line -->
+    <hr class="mb-4" style="width: 80px; margin: 0 auto; border-top: 2px solid #e5e5e5;">
+
+    <!-- Big “Find what fits you” -->
+    <h1 class="fw-700 mb-5" style="font-size: 4rem; letter-spacing: -1px;">Find what fits you</h1>
+
+    <!-- DUAL-BUTTON ROW -->
+    <div class="d-flex justify-content-center gap-3 mb-5">
+      <!-- Button 1: Dream Home (no filters) -->
+      <a href="?show=all" class="btn btn-outline-dark btn-lg px-4">Find your dream home</a>
+      <!-- Button 2: Scroll to criteria -->
+      <button class="btn btn-accent btn-lg px-4" onclick="document.querySelector('.search-bar').scrollIntoView({behavior:'smooth'})">Choose criteria</button>
+    </div>
+
+    <!-- FULL-WIDTH FILTER PAD -->
+    <form method="get" class="search-bar" style="padding: 3rem 1.5rem; max-width: 100%;" onsubmit="scrollToResults()">
+      <!-- Row 1: Location + Bedrooms + Price (smaller boxes) -->
+      <div class="row g-3 mb-4 justify-content-center">
         <div class="col-md-3">
-          <select class="form-select form-select-lg" name="bedrooms">
+          <input id="location-input"
+                 class="form-control form-control-sm"
+                 type="text"
+                 name="location"
+                 placeholder="Search by location"
+                 value="{{ request.GET.location }}"
+                 autocomplete="off"
+                 spellcheck="false">
+        </div>
+        <div class="col-md-2">
+          <select class="form-select form-select-sm" name="bedrooms">
             {% for val, label in bedroom_choices %}
               <option value="{{ val }}" {% if request.GET.bedrooms == val %}selected{% elif not request.GET.bedrooms and val == 'Single Room' %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
           </select>
         </div>
-        <div class="col-md-3">
-          <input class="form-control form-control-lg" type="number" name="price" placeholder="Price (KES)" min="0" value="{{ request.GET.price }}">
-        </div>
         <div class="col-md-2">
-          <button class="btn btn-accent btn-lg w-100">Search</button>
+          <input class="form-control form-control-sm" type="number" name="price" placeholder="Price (KES)" min="0" value="{{ request.GET.price }}">
         </div>
       </div>
 
-      <!-- PRICE PILLS -->
-      <div class="mb-4">
+      <!-- Row 2: Price Pills -->
+      <div class="mb-3">
         <small class="text-muted me-3">Filter by budget:</small>
         <span class="price-pill" data-val="1-5k">KES 1 – 5 k</span>
         <span class="price-pill" data-val="5-10k">KES 5 – 10 k</span>
@@ -80,16 +110,33 @@
         <span class="price-pill" data-val="20k+">KES 20 k+</span>
       </div>
 
-      <!-- BEDROOM CHIPS -->
+      <!-- Row 3: Bedroom Chips -->
       <div class="mb-4">
         <small class="text-muted me-3">Preferred bedrooms:</small>
         {% for val, label in bedroom_choices %}
           <span class="chip" data-bed="{{ val }}">{{ label }}</span>
         {% endfor %}
       </div>
+
+      <!-- Row 4: Full-width Search Button -->
+      <div class="d-flex justify-content-center">
+        <button class="btn btn-accent px-5" style="width: 50%; max-width: 600px;">Search</button>
+      </div>
     </form>
+
+    <!-- Separator Title -->
+    <h4 class="fw-600 mt-5 mb-4">Available Rentals</h4>
   </div>
 </section>
+
+<!-- Auto-scroll to results after Search -->
+<script>
+function scrollToResults() {
+  setTimeout(() => {
+    document.querySelector('.results-scroll').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 150);
+}
+</script>
 {% endif %}
 
 <!-- RESULTS (always shown) -->
@@ -137,6 +184,61 @@ document.querySelectorAll('.chip').forEach(c => {
     document.querySelector('select[name="bedrooms"]').value = c.dataset.bed;
     c.form.submit();
   });
+});
+</script>
+<script>
+/* Nominatim autosuggest – throttled, styled */
+const locationInput = document.getElementById('location-input');
+const suggestBox = document.createElement('div');
+suggestBox.className = 'position-absolute w-100 mt-1';
+suggestBox.style.zIndex = '1050';
+suggestBox.style.maxHeight = '200px';
+suggestBox.style.overflowY = 'auto';
+suggestBox.style.border = '1px solid #e5e5e5';
+suggestBox.style.borderRadius = '8px';
+suggestBox.style.background = '#fff';
+locationInput.parentElement.style.position = 'relative';
+locationInput.parentElement.appendChild(suggestBox);
+
+let lastQuery = '';
+let lastCall = 0;
+const throttle = 1000; // 1 second
+
+locationInput.addEventListener('input', async () => {
+  const query = locationInput.value.trim();
+  if (query.length < 2) { suggestBox.innerHTML = ''; return; }
+  if (query === lastQuery) return;
+  lastQuery = query;
+
+  const now = Date.now();
+  if (now - lastCall < throttle) return;
+  lastCall = now;
+
+  suggestBox.innerHTML = ''; // clear old
+
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&countrycodes=ke&limit=5`;
+    const res = await fetch(url);
+    const data = await res.json();
+    data.forEach(item => {
+      const choice = document.createElement('button');
+      choice.type = 'button';
+      choice.className = 'list-group-item list-group-item-action border-0 py-2';
+      choice.style.textAlign = 'left';
+      choice.textContent = item.display_name;
+      choice.addEventListener('click', () => {
+        locationInput.value = item.display_name;
+        suggestBox.innerHTML = '';
+      });
+      suggestBox.appendChild(choice);
+    });
+  } catch (e) {
+    console.warn('Nominatim error', e);
+  }
+});
+
+document.addEventListener('click', e => {
+  if (!suggestBox.contains(e.target) && e.target !== locationInput) suggestBox.innerHTML = '';
 });
 </script>
 </body>

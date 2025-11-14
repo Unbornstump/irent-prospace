@@ -7,45 +7,47 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   {% load static %}
   <link rel="stylesheet" href="{% static 'listings/style.css' %}">
-  <style>
-    .hero { background: #fff; padding: 3rem 0 2rem; }
-    .search-bar { background: #ffffff; border: 1px solid #e6e6e6; border-radius: 12px; padding: 1.25rem; box-shadow: 0 4px 16px rgba(0,0,0,.04); min-height: 100vh; }
-    .price-pill { display: inline-block; border: 1px solid #d0d0d0; border-radius: 20px; padding: .35rem .9rem; margin: .25rem; font-size: .8rem; cursor: pointer; transition: all .2s; }
-    .price-pill:hover, .price-pill.active { background: #000; color: #fff; border-color: #000; }
-    .chip { display: inline-block; border: 1px solid #d0d0d0; border-radius: 18px; padding: .3rem .8rem; margin: .2rem; font-size: .75rem; cursor: pointer; transition: all .2s; }
-    .chip:hover, .chip.active { background: #000; color: #fff; border-color: #000; }
-    .results-scroll { min-height: 100vh; }
-    /* ===== bigger pills / chips ===== */
-.price-pill,
-.chip {
-    font-size: 1rem;
-    padding: 0.8rem 1.6rem;
-    border-radius: 30px;
-    margin: 0.4rem 0.3rem;          /* generous gaps */
-    display: inline-flex;           /* keeps vertical center */
-    align-items: center;
-    transition: transform .2s ease, background .2s ease, color .2s ease;
+  <!-- Add this in your <head> to load fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+
+
+<style>
+  /* ================= HERO & LAYOUT ================= */
+.hero { 
+    background: #fff; 
+    padding: 3rem 0 2rem; 
 }
 
-.price-pill:hover,
-.chip:hover,
-.price-pill.active,
-.chip.active {
-    transform: scale(1.08);         /* subtle pop */
+.search-bar { 
+    background: #fff; 
+    border: 1px solid #e6e6e6; 
+    border-radius: 12px; 
+    padding: 1.25rem; 
+    box-shadow: 0 4px 16px rgba(0,0,0,.04); 
+    min-height: 100vh; 
 }
-.filter-label {
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin-top: 1rem;   /* push down a little */
-    display: inline-block;
+
+.results-scroll { 
+    min-height: 100vh; 
 }
+
+/* ================= FORM ELEMENTS ================= */
 .form-control,
 .form-select {
     font-size: 1.1rem;
     padding: 0.75rem 1rem;
-    height: auto;          /* let padding decide height */
+    height: auto; /* let padding decide height */
 }
-/* ===== bigger pills / chips ===== */
+
+/* ================= FILTER LABELS ================= */
+.filter-label {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-top: 1rem;
+    display: inline-block;
+}
+
+/* ================= PILLS & CHIPS ================= */
 .price-pill,
 .chip {
     font-size: 1rem;
@@ -54,9 +56,12 @@
     margin: 0.4rem 0.3rem;
     display: inline-flex;
     align-items: center;
-    transition: transform .2s ease, background .2s ease, color .2s ease;
+    border: 1px solid #d0d0d0;
+    cursor: pointer;
+    transition: transform .2s ease, background .2s ease, color .2s ease, border .2s ease;
 }
 
+/* Hover & active states */
 .price-pill:hover,
 .chip:hover,
 .price-pill.active,
@@ -64,7 +69,7 @@
     transform: scale(1.08);
 }
 
-/* === selected border  === */
+/* Active selected style */
 .price-pill.active,
 .chip.active {
     border: 2px solid #000 !important;
@@ -72,47 +77,220 @@
     color: #000 !important;
 }
 
-/* ---- hover-zoom buttons ---- */
+/* ================= BUTTONS ================= */
+/* Base hover animation */
 .hover-btn {
-  transition: transform .2s ease, background .2s ease, color .2s ease;
-  border: 2px solid transparent;
+    transition: transform .2s ease, background .2s ease, color .2s ease, border .2s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
 }
+
+/* Generic hover effect */
 .hover-btn:hover {
-  transform: scale(1.05);
-  background: transparent !important;
-  color: #000 !important;
-  border-color: #000 !important;
+    transform: scale(1.05);
 }
-.btn-outline-dark.hover-btn { border-color: #000; }
-.btn-accent.hover-btn       { border-color: #000; }
-  </style>
+
+/* Accent button (black bg / white text) */
+.btn-accent.hover-btn {
+    background-color: #000;
+    color: #fff;
+    border-color: #000;
+    font-weight: 500;
+}
+
+.btn-accent.hover-btn:hover {
+    background-color: #fff !important;
+    color: #000 !important;
+    border-color: #000 !important;
+}
+
+/* Outline dark button (white bg / black text / black border) */
+.btn-outline-dark.hover-btn {
+    background-color: transparent;
+    color: #000;
+    border-color: #000;
+    font-weight: 500;
+}
+
+.btn-outline-dark.hover-btn:hover {
+    background-color: #000 !important;
+    color: #fff !important;
+    border-color: #000 !important;
+}
+
+/* Hero / large buttons */
+.btn-lg.hover-btn {
+    font-size: 1.2rem;
+    padding: 0.8rem 1.5rem;
+}
+
+/* ================= NAV-LINKS ================= */
+.nav-link.hover-btn {
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+}
+
+.nav-link.hover-btn:hover {
+    background-color: rgba(0,0,0,0.05);
+    color: #000 !important;
+}
+/* ================= SIGN UP / LOG IN BUTTONS ================= */
+.btn-signup,
+.btn-login {
+    font-family: 'Poppins', 'Montserrat', sans-serif;
+    font-size: 1.25rem;       /* was 1.6rem — reduced */
+    padding: 0.9rem 2.2rem;   /* was 1.2rem 3rem — reduced */
+    border-radius: 32px;      /* slightly smaller */
+    font-weight: 700;
+    transition: transform .2s ease, background .2s ease, color .2s ease, border .2s ease;
+    cursor: pointer;
+}
+
+/* Hover effects */
+.btn-signup:hover,
+.btn-login:hover {
+    transform: scale(1.08);   /* slightly reduced from 1.12 */
+}
+
+/* Sign Up - solid black */
+.btn-signup {
+    background-color: #000;
+    color: #fff;
+    border: 2px solid #000;
+}
+
+.btn-signup:hover {
+    background-color: #fff !important;
+    color: #000 !important;
+}
+
+/* Log In - outlined */
+.btn-login {
+    background-color: transparent;
+    color: #000;
+    border: 2px solid #000;
+}
+
+.btn-login:hover {
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+
+</style>
 </head>
 <body>
 <!-- MINIMAL HEADER -->
-<nav class="navbar navbar-custom">
-  <div class="container d-flex justify-content-between align-items-center">
-    <div class="d-flex align-items-center gap-2">
-      <a class="navbar-brand fw-700" href="{% url 'home' %}">iRent ProSpace</a>
-      {% if user.is_authenticated %}
-        <span class="navbar-text fw-600">Hi {{ user.username }}!</span>
-      {% endif %}
-    </div>
-    <div class="d-flex gap-2">
-      <a class="btn btn-sm" href="{% url 'about' %}">About</a>
-      <a class="btn btn-sm" href="{% url 'contact' %}">Contact Us</a>
-      {% if user.is_authenticated %}
-        {% if user.profile.user_type == 'landlord' %}
-          <a class="btn btn-sm btn-accent" href="{% url 'my_properties' %}">My Properties</a>
-          <a class="btn btn-sm btn-accent" href="{% url 'landlord_upload' %}">Add Property</a>
+<!-- ===== PROFESSIONAL NAVBAR v2 ===== -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 sticky-top">
+  <div class="container">
+    <!-- BRAND -->
+    <a class="navbar-brand fw-bold text-dark fs-4" href="{% url 'home' %}">iRent ProSpace</a>
+    {% if user.is_authenticated %}
+      <span class="ms-3 fw-medium text-muted d-none d-lg-inline">Hi, {{ user.username }}!</span>
+    {% endif %}
+
+    <!-- MOBILE TOGGLE -->
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- NAV LINKS -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarMenu">
+      <ul class="navbar-nav align-items-center gap-2 gap-lg-3">
+        <li class="nav-item">
+          <a class="nav-link text-dark hover-btn px-3 py-2" href="{% url 'about' %}">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-dark hover-btn px-3 py-2" href="{% url 'contact' %}">Contact Us</a>
+        </li>
+
+        {% if user.is_authenticated %}
+          {% if user.profile.user_type == 'landlord' %}
+            <li class="nav-item">
+              <a class="btn btn-outline-dark btn-sm hover-btn" href="{% url 'my_properties' %}">My Properties</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-accent btn-sm hover-btn" href="{% url 'landlord_upload' %}">Add Property</a>
+            </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="btn btn-outline-dark btn-sm hover-btn" href="{% url 'logout' %}">Logout</a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="btn-signup" href="{% url 'signup' %}">Sign Up</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn-login" href="{% url 'user_login' %}">Log In</a>
+
+          </li>
         {% endif %}
-        <a class="btn btn-sm" href="{% url 'logout' %}">Logout</a>
-      {% else %}
-        <a class="btn btn-sm" href="{% url 'signup' %}">Sign Up</a>
-        <a class="btn btn-sm" href="{% url 'user_login' %}">Log In</a>
-      {% endif %}
+      </ul>
     </div>
   </div>
 </nav>
+
+<!-- ===== NAVBAR STYLES & ANIMATIONS ===== -->
+<style>
+  /* Button & link hover effect */
+  .hover-btn {
+    transition: all 0.25s ease;
+    border: 2px solid transparent;
+  }
+/* Safe hover for nav links (not buttons) */
+.nav-link.hover-btn:hover {
+    background-color: rgba(0,0,0,0.06) !important;
+    color: #000 !important;
+    border-color: transparent !important;
+    transform: scale(1.05);
+}
+
+
+  /* Accent button */
+  .btn-accent {
+    background-color: #000;
+    color: #fff;
+    border: 2px solid #000;
+    font-weight: 500;
+  }
+
+  .btn-accent:hover {
+    background-color: #fff !important;
+    color: #000 !important;
+  }
+
+  /* Outline dark button */
+  .btn-outline-dark {
+    border: 2px solid #000;
+    color: #000;
+    font-weight: 500;
+    background-color: transparent;
+  }
+
+  .btn-outline-dark:hover {
+    background-color: #000 !important;
+    color: #fff !important;
+  }
+
+  /* Nav-link hover */
+  .nav-link.hover-btn {
+    border-radius: 8px;
+  }
+
+  /* Sticky + shadow effect */
+  .navbar.sticky-top {
+    backdrop-filter: blur(8px);
+    z-index: 1030;
+  }
+
+  /* Mobile spacing tweaks */
+  @media (max-width: 992px) {
+    .navbar-nav {
+      gap: 0.5rem;
+    }
+  }
+</style>
 
 <!-- HERO (tenants / anonymous only) -->
 {% if not is_landlord %}
@@ -149,61 +327,75 @@
       </button>
     </div>
 
-    <!-- FULL-WIDTH FILTER PAD -->
-    <form method="get" id="filters" class="search-bar" style="padding: 12vh 2rem; min-height: 100vh;">
-      <!-- Row 1: Location + Bedrooms + Price (smaller boxes) -->
-      <div class="row g-3 mb-4 justify-content-center">
-        <div class="col-md-3">
-          <input id="location-input"
-                 class="form-control form-control-sm"
-                 type="text"
-                 name="location"
-                 placeholder="Search by location"
-                 value="{{ request.GET.location }}"
-                 autocomplete="off"
-                 spellcheck="false" required>
-        </div>
-        <div class="col-md-2">
-          <select class="form-select form-select-sm" name="bedrooms" required >
-            {% for val, label in bedroom_choices %}
-              <option value="{{ val }}" {% if request.GET.bedrooms == val %}selected{% elif not request.GET.bedrooms and val == 'Single Room' %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-md-2">
-          <input class="form-control form-control-sm" type="number" name="price" placeholder="Enter price" placeholder="Price (KES)" min="0" value="{{ request.GET.price }}" required >
-        </div>
-      </div>
-
-      <!-- Row 2: Price Pills -->
-      <div class="mb-3 d-flex flex-wrap justify-content-center">
-        <small class="text-muted filter-label">Filter by budget:</small>
-        <span class="price-pill" data-val="1-5k">KES 1 – 5 k</span>
-        <span class="price-pill" data-val="5-10k">KES 5 – 10 k</span>
-        <span class="price-pill" data-val="10-20k">KES 10 – 20 k</span>
-        <span class="price-pill" data-val="20k+">KES 20 k+</span>
-      </div>
-
-      <!-- Row 3: Bedroom Chips -->
-      <div class="mb-4 d-flex flex-wrap justify-content-center">
-        <small class="text-muted filter-label">Preferred bedrooms:</small>
-         {% for val, label in bedroom_choices %}
-            <span class="chip" data-bed="{{ val }}">{{ label }}</span>
-         {% endfor %}
-      </div>
-
-      <!-- Row 4: Full-width Search Button -->
-      <!-- spacer pushes button to bottom -->
-<div class="d-flex flex-column justify-content-between" style="min-height: 18vh;">
-  <div></div> <!-- empty top cell -->
-  <div class="d-flex justify-content-center">
-    <button class="btn btn-accent px-5"
-            style="width: 60%; max-width: 600px; padding: 0.8rem 1rem; font-size: 1.2rem;">
-      Search
-    </button>
+ <form method="get" id="filters" class="search-bar" style="padding: 12vh 2rem; min-height: 100vh;">
+  <!-- Row 1: Location + Bedrooms + Price -->
+  <div class="row g-3 mb-4 justify-content-center">
+    <div class="col-md-3">
+      <input id="location-input"
+             class="form-control form-control-sm"
+             type="text"
+             name="location"
+             placeholder="Search by location"
+             value="{{ request.GET.location }}"
+             autocomplete="off"
+             spellcheck="false" required>
+    </div>
+    <div class="col-md-2">
+      <select class="form-select form-select-sm" name="bedrooms" required >
+        {% for val, label in bedroom_choices %}
+          <option value="{{ val }}" {% if request.GET.bedrooms == val %}selected{% elif not request.GET.bedrooms and val == 'Single Room' %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <input class="form-control form-control-sm" type="number" name="price" placeholder="Price (KES)" min="0" value="{{ request.GET.price }}" required >
+    </div>
   </div>
-</div>
-    </form>
+
+  <!-- Row 2: Price Pills -->
+  <div class="mb-3 d-flex flex-wrap justify-content-center">
+    <small class="text-muted filter-label">Filter by budget:</small>
+    <span class="price-pill" data-val="1-5k">KES 1 – 5 k</span>
+    <span class="price-pill" data-val="5-10k">KES 5 – 10 k</span>
+    <span class="price-pill" data-val="10-20k">KES 10 – 20 k</span>
+    <span class="price-pill" data-val="20k+">KES 20 k+</span>
+  </div>
+
+  <!-- Row 3: Bedroom Chips -->
+  <div class="mb-4 d-flex flex-wrap justify-content-center">
+    <small class="text-muted filter-label">Preferred bedrooms:</small>
+     {% for val, label in bedroom_choices %}
+        <span class="chip" data-bed="{{ val }}">{{ label }}</span>
+     {% endfor %}
+  </div>
+
+  <!-- Row 4: Full-width Search Button + helper text -->
+  <div class="d-flex flex-column justify-content-between" style="min-height: 18vh;">
+    <div></div>
+    <div class="d-flex justify-content-center">
+      <button type="submit" class="btn btn-accent px-5"
+              style="width: 60%; max-width: 600px; padding: 0.8rem 1rem; font-size: 1.2rem;">
+        Search
+      </button>
+    </div>
+    <div class="text-center mt-3">
+      {% if mode %}
+        <span class="search-helper text-muted small">
+          {% if mode == 'exact' %}
+            Exact matches found
+          {% elif mode == 'near' %}
+            No exact match; showing near matches
+          {% elif mode == 'location' %}
+            No exact match; showing location matches
+          {% else %}
+            No matches found
+          {% endif %}
+        </span>
+      {% endif %}
+    </div>
+  </div>
+</form>
+
 
     <!-- Separator Title -->
     <h4 class="fw-600 mt-5 mb-4">Available Rentals</h4>
@@ -281,48 +473,14 @@ function scrollToResults() {
 {% endif %}
 
 
-<!-- ===== SMART AI HELPER (inserted above #results) ===== -->
-{% if search_location or search_bedrooms or search_price %}
-<script>
-/* helper: generate smart retry buttons */
-function smartSuggestions(){
-  const loc  = '{{ search_location|escapejs }}';
-  const bed  = '{{ search_bedrooms|escapejs }}';
-  const pr   = '{{ search_price|escapejs }}';
-  const band = pr >= 20001 ? '20k+' : pr >= 10001 ? '10-20k' : pr >= 5001 ? '5-10k' : pr >= 1000 ? '1-5k' : 'any';
-
-  const sug = [];
-  /* 1. same location, any bedroom */
-  sug.push({txt:`All rooms in ${loc}`, url:`?location=${encodeURIComponent(loc)}&show=all#results`});
-  /* 2. same bedroom, any location */
-  sug.push({txt:`Any ${bed} rental`,  url:`?bedrooms=${encodeURIComponent(bed)}&show=all#results`});
-  /* 3. same location, same room, next price band */
-  const nextBand = band === '1-5k' ? '5-10k' : band === '5-10k' ? '10-20k' : band === '10-20k' ? '20k+' : '';
-  if (nextBand) sug.push({txt:`${bed} in ${loc} (KES ${nextBand})`, url:`?location=${encodeURIComponent(loc)}&bedrooms=${encodeURIComponent(bed)}&price_range=${nextBand}#results`});
-  return sug;
-}
-</script>
-
-<div class="alert alert-primary border-0 text-dark fw-500 fs-5 mb-4">
-  <div class="d-flex align-items-center mb-2"><span class="me-2">🤖</span><strong>Smart suggestions for you</strong></div>
-  <p class="mb-2">
-    {% if mode == 'none' %}Zero listings match every filter. Try these instead:{% else %}Tight criteria! Loosen one filter for more choices:{% endif %}
-  </p>
-  <div class="d-flex flex-wrap gap-2 mb-2">
-    {% for s in smartSuggestions %}
-      <a href="{{ s.url }}" class="btn btn-sm btn-outline-primary">{{ s.txt }}</a>
-    {% endfor %}
-  </div>
-  <small class="text-muted">Click any button – results appear instantly.</small>
-</div>
-{% endif %}
-<!-- ===== END SMART AI ===== -->
-
 
 <!-- RESULTS (always shown) -->
 <section id="results" class="results-scroll py-5">
   <div class="container">
-    <div class="row g-4">
+    <!-- Header for available rentals -->
+    <h2 class="mb-4 fw-600 text-center">Available Rentals</h2>
+
+    <div class="row g-4" id="results-row">
       {% for prop in properties %}
         <div class="col-md-4">
           <div class="card h-100 shadow-sm">
@@ -348,21 +506,67 @@ function smartSuggestions(){
     </div>
   </div>
 </section>
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-/* ---- pills / chips -> sync boxes + border ---- */
+/* ====================== Smart Suggestions ====================== */
+function generateSmartSuggestions(location, bedrooms, price) {
+  if (!location && !bedrooms && !price) return [];
+
+  const pr = Number(price) || 0;
+  const band = pr >= 20001 ? '20k+' : pr >= 10001 ? '10-20k' : pr >= 5001 ? '5-10k' : pr >= 1000 ? '1-5k' : 'any';
+  const suggestions = [];
+
+  if (location) suggestions.push({ txt: `All rooms in ${location}`, url: `?location=${encodeURIComponent(location)}&show=all#results` });
+  if (bedrooms) suggestions.push({ txt: `Any ${bedrooms} rental`, url: `?bedrooms=${encodeURIComponent(bedrooms)}&show=all#results` });
+
+  const nextBand = band === '1-5k' ? '5-10k' : band === '5-10k' ? '10-20k' : band === '10-20k' ? '20k+' : '';
+  if (location && bedrooms && nextBand) {
+    suggestions.push({ txt: `${bedrooms} in ${location} (KES ${nextBand})`, 
+      url: `?location=${encodeURIComponent(location)}&bedrooms=${encodeURIComponent(bedrooms)}&price_range=${nextBand}#results` 
+    });
+  }
+
+  return suggestions;
+}
+
+function updateSmartAI(location, bedrooms, price) {
+  const container = document.getElementById('smart-ai');
+  const textEl = document.getElementById('smart-ai-text');
+  const buttonsEl = document.getElementById('smart-ai-buttons');
+  const suggestions = generateSmartSuggestions(location, bedrooms, price);
+
+  if (suggestions.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+
+  textEl.textContent = 'Tight criteria! Loosen one filter for more choices:';
+  buttonsEl.innerHTML = '';
+  suggestions.forEach(s => {
+    const btn = document.createElement('a');
+    btn.href = s.url;
+    btn.className = 'btn btn-sm btn-outline-primary';
+    btn.textContent = s.txt;
+    buttonsEl.appendChild(btn);
+  });
+
+  container.style.display = 'block';
+}
+
+/* ====================== Pills / Chips ====================== */
 document.querySelectorAll('.price-pill').forEach(pill => {
   pill.addEventListener('click', () => {
     document.querySelectorAll('.price-pill').forEach(p => p.classList.remove('active'));
     pill.classList.add('active');
     const val = pill.dataset.val;
     document.querySelector('input[name="price"]').value =
-      val === '1-5k'   ? '5000'
-    : val === '5-10k'  ? '10000'
-    : val === '10-20k' ? '20000'
-    : val === '20k+'   ? '25000'
-    : '';
+      val === '1-5k' ? '5000' :
+      val === '5-10k' ? '10000' :
+      val === '10-20k' ? '20000' :
+      val === '20k+' ? '25000' : '';
   });
 });
 
@@ -374,134 +578,68 @@ document.querySelectorAll('.chip').forEach(chip => {
   });
 });
 
-/* ---- manual box change -> move border ---- */
 const priceInput = document.querySelector('input[name="price"]');
-if (priceInput) {
-  priceInput.addEventListener('input', () => {
-    const val = Number(priceInput.value) || 0;
-    document.querySelectorAll('.price-pill').forEach(p => p.classList.remove('active'));
-    let target = '';
-    if (val >= 1000 && val <= 5000)   target = '1-5k';
-    if (val >= 5001 && val <= 10000)  target = '5-10k';
-    if (val >= 10001 && val <= 20000) target = '10-20k';
-    if (val >= 20001)                 target = '20k+';
-    document.querySelector(`.price-pill[data-val="${target}"]`)?.classList.add('active');
-  });
-}
+priceInput?.addEventListener('input', () => {
+  const val = Number(priceInput.value) || 0;
+  document.querySelectorAll('.price-pill').forEach(p => p.classList.remove('active'));
+  let target = '';
+  if (val >= 1000 && val <= 5000) target = '1-5k';
+  if (val >= 5001 && val <= 10000) target = '5-10k';
+  if (val >= 10001 && val <= 20000) target = '10-20k';
+  if (val >= 20001) target = '20k+';
+  document.querySelector(`.price-pill[data-val="${target}"]`)?.classList.add('active');
+});
 
 const bedSelect = document.querySelector('select[name="bedrooms"]');
-if (bedSelect) {
-  bedSelect.addEventListener('change', () => {
-    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    document.querySelector(`.chip[data-bed="${bedSelect.value}"]`)?.classList.add('active');
-  });
-}
+bedSelect?.addEventListener('change', () => {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  document.querySelector(`.chip[data-bed="${bedSelect.value}"]`)?.classList.add('active');
+});
 
-/* ---- require all fields ---- */
-document.querySelector('#filters').addEventListener('submit', function (e) {
-  const loc  = this.location.value.trim();
-  const bed  = this.bedrooms.value;
-  const pr   = this.price.value;
+/* ====================== AJAX Search ====================== */
+document.querySelector('#filters').addEventListener('submit', async e => {
+  e.preventDefault();
+  const form = e.target;
+  const loc = form.location.value.trim();
+  const bed = form.bedrooms.value;
+  const pr = form.price.value;
+
   if (!loc || !bed || !pr) {
-    e.preventDefault();
     alert('Please fill Location, Bedrooms and Price.');
     return;
   }
-});
 
-/* ---- AJAX search (no page reload, no jump) ---- */
-document.querySelector('#filters').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const form   = e.target;
-  const url    = new URL(window.location);
+  const url = new URL(window.location);
   const params = new URLSearchParams(new FormData(form));
   for (const [k,v] of params) url.searchParams.set(k,v);
-
-  /* update URL bar without reload */
   window.history.replaceState({}, '', url);
 
-  /* fetch new results HTML */
-  try{
-    const res  = await fetch(url.href);
+  try {
+    const res = await fetch(url.href);
     const html = await res.text();
+    const newDoc = new DOMParser().parseFromString(html, 'text/html');
 
-    /* extract only the new #results block */
-    const newDoc    = new DOMParser().parseFromString(html, 'text/html');
-    const newResults= newDoc.querySelector('#results');
+    // Replace results and smart AI
+    const newResults = newDoc.querySelector('#results');
     document.querySelector('#results').replaceWith(newResults);
 
-    /* smooth scroll to results */
+    const newSmartAI = newDoc.querySelector('#smart-ai');
+    if (newSmartAI) document.querySelector('#smart-ai').replaceWith(newSmartAI);
+
+    // Fire scroll and suggestion update
     document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
-  }catch(err){
+  } catch(err) {
     console.error('Search failed', err);
     alert('Search failed. Please try again.');
   }
 });
 
-/* ---- faster Nominatim + short names ---- */
-const locationInput = document.getElementById('location-input');
-const suggestBox    = document.createElement('div');
-suggestBox.className = 'position-absolute w-100 mt-1';
-suggestBox.style.zIndex = '1050';
-suggestBox.style.maxHeight = '200px';
-suggestBox.style.overflowY = 'auto';
-suggestBox.style.border = '1px solid #e5e5e5';
-suggestBox.style.borderRadius = '8px';
-suggestBox.style.background = '#fff';
-locationInput.parentElement.style.position = 'relative';
-locationInput.parentElement.appendChild(suggestBox);
-
-let controller, lastQuery = '', lastCall = 0;
-const throttle = 600; // ms
-
-locationInput.addEventListener('input', async () => {
-  const query = locationInput.value.trim();
-  if (query.length < 2){ suggestBox.innerHTML = ''; return; }
-  if (query === lastQuery) return;
-  lastQuery = query;
-  const now = Date.now();
-  if (now - lastCall < throttle) return;
-  lastCall = now;
-  if (controller) controller.abort();
-  controller = new AbortController();
-
-  try{
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&countrycodes=ke&limit=3`,
-      { signal: controller.signal, cache: 'no-store' }
-    );
-    const data = await res.json();
-    suggestBox.innerHTML = '';
-    data.forEach(item => {
-      const short = item.display_name.split(',')[0];
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'list-group-item list-group-item-action border-0 py-2';
-      btn.style.textAlign = 'left';
-      btn.textContent = short;
-      btn.onclick = () => { locationInput.value = short; suggestBox.innerHTML = ''; };
-      suggestBox.appendChild(btn);
-    });
-  }catch(e){ if (e.name !== 'AbortError') console.warn('Nominatim error', e); }
-});
-
-document.addEventListener('click', e => {
-  if (!suggestBox.contains(e.target) && e.target !== locationInput) suggestBox.innerHTML = '';
-});
-
-/* ---- block Enter inside filter ---- */
-document.getElementById('filters').addEventListener('keydown', e => {
-  if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') {
-    e.preventDefault();
-    document.querySelector('button[type="submit"]').click();
-  }
-});
-
-/* ---- fire borders on load ---- */
+/* ====================== Fire initial events ====================== */
 priceInput?.dispatchEvent(new Event('input'));
 bedSelect?.dispatchEvent(new Event('change'));
+updateSmartAI(priceInput?.value ? document.getElementById('location-input').value : '', 
+              bedSelect?.value, priceInput?.value);
+
 </script>
 </body>
 </html>
-</body>
-</html> 

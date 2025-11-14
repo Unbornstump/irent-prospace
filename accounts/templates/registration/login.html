@@ -7,30 +7,129 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   {% load static %}
   <style>
-    :root { --bg: #fafafa; --paper: #ffffff; --text: #111; --line: #e6e6e6; --accent: #000; }
-    body        { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
-    /* bigger card */
-    .login-card { max-width: 480px; margin: 4rem auto; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 3rem 3.5rem; box-shadow: 0 10px 40px rgba(0,0,0,.06); }
-    /* bigger button */
-    .btn-login  {
-      background: var(--accent); color: #fff; border: 1px solid var(--accent);
-      border-radius: 18px; font-weight: 500; padding: 0.85rem 1.75rem; font-size: 1.1rem;
-      transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+    :root { 
+      --bg: #fafafa; 
+      --paper: #ffffff; 
+      --text: #111; 
+      --line: #e6e6e6; 
+      --accent: #000; 
+      --accent-light: #f0f0f0;
+      --accent-hover: #333;
     }
-    .btn-login:hover {
-      transform: scale(1.05); background: transparent; color: var(--accent); border-color: var(--accent);
+
+    body { 
+      background: var(--bg); 
+      color: var(--text); 
+      font-family: 'Inter', sans-serif; 
+      line-height: 1.6; 
     }
-    /* bigger inputs */
-    .form-control, .form-control:focus {
-      border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--text);
-      padding: 0.9rem 1.1rem; font-size: 1.05rem;
+
+    .login-card { 
+      max-width: 480px; 
+      margin: 6rem auto; 
+      background: var(--paper); 
+      border: 1px solid var(--line); 
+      border-radius: 20px; 
+      padding: 3rem 3.5rem; 
+      box-shadow: 0 10px 40px rgba(0,0,0,.06); 
     }
-    .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,0,0,.1); }
+
+    .btn-login { 
+      background: var(--accent); 
+      color: #fff; 
+      border: 1px solid var(--accent); 
+      border-radius: 18px; 
+      font-weight: 500; 
+      padding: 0.85rem 1.75rem; 
+      font-size: 1.1rem; 
+      transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease; 
+    }
+
+    .btn-login:hover { 
+      transform: scale(1.05); 
+      background: transparent; 
+      color: var(--accent); 
+      border-color: var(--accent); 
+    }
+
+    .form-control, .form-control:focus { 
+      border: 1px solid var(--line); 
+      border-radius: 10px; 
+      background: var(--paper); 
+      color: var(--text); 
+      padding: 0.9rem 1.1rem; 
+      font-size: 1.05rem; 
+    }
+
+    .form-control:focus { 
+      border-color: var(--accent); 
+      box-shadow: 0 0 0 2px rgba(0,0,0,.1); 
+    }
+
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
-    /* header bar */
-    .top-bar { background: rgba(255,255,255,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+
+    .top-bar { 
+      background: rgba(255,255,255,.85); 
+      backdrop-filter: blur(10px); 
+      border-bottom: 1px solid var(--line); 
+    }
+
     .top-bar a { font-weight: 600; }
+
+    .user-type-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .user-type-btn { 
+      cursor: pointer; 
+      padding: 0.5rem 1.5rem; 
+      border-radius: 12px; 
+      border: 1px solid var(--line); 
+      background: var(--accent-light); 
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .user-type-btn.active-type { 
+      background: var(--accent); 
+      color: #fff; 
+      border-color: var(--accent);
+    }
+
+    .user-type-btn:hover { 
+      background: var(--accent-hover); 
+      color: #fff;
+    }
+
+    .help-info {
+      font-size: 0.9rem;
+      color: #555;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .password-wrap .eye {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #111;
+  padding: 0;
+}
+.password-wrap .eye:hover {
+  color: var(--accent);
+}
+.user-type-btn.active-type { 
+  background: var(--accent); 
+  color: #fff; 
+  border-color: var(--accent);
+}
+
+
+
   </style>
 </head>
 <body class="d-flex align-items-center py-5">
@@ -44,27 +143,94 @@
 </nav>
 
 <div class="login-card">
-  <h2 class="mb-4 text-center">Log In</h2>
+  <h2 class="mb-2 text-center" id="login-heading">Tenant Log In</h2>
 
-  <form method="post">
+  <!-- User type selection -->
+  <div class="text-center mb-3">
+    <button type="button" id="tenant-btn" class="user-type-btn active-type me-2">Tenant</button>
+    <button type="button" id="landlord-btn" class="user-type-btn">Landlord</button>
+  </div>
+
+  <!-- Help info -->
+  <p id="help-info" class="text-center text-muted mb-3 small">
+    Log in as a landlord to manage your properties and listings.
+  </p>
+
+  <!-- Error messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post" id="login-form">
     {% csrf_token %}
-    <!-- wide inputs, placeholder text only -->
+    <input type="hidden" name="user_type" id="user_type" value="{{ request.POST.user_type|default:'tenant' }}">
     <div class="mb-3">
-      <input type="text" name="username" id="id_username" class="form-control form-control-lg" placeholder="Username" required autofocus>
+      <input type="text" name="username" class="form-control form-control-lg" placeholder="Username" required autofocus value="{{ request.POST.username }}">
     </div>
-    <div class="mb-4">
-      <input type="password" name="password" id="id_password" class="form-control form-control-lg" placeholder="Password" required>
-    </div>
+    <div class="mb-4 position-relative password-wrap">
+  <input type="password" name="password" class="form-control form-control-lg" 
+         placeholder="Password" id="login-password" required>
+  <button type="button" class="eye btn btn-sm position-absolute top-50 end-0 translate-middle-y me-2" 
+          onclick="togglePassword('login-password')">👁</button>
+</div>
+
     <button type="submit" class="btn btn-login w-100">Log In</button>
   </form>
 
-  <p class="text-center mt-4 mb-0">Already have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+  <p class="text-center mt-4 mb-0">Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
 </div>
 
-<!-- keep location short (if field exists) -->
+<!-- USER TYPE TOGGLE SCRIPT -->
 <script>
-  const loc = document.querySelector('#id_location');
-  if (loc) loc.addEventListener('blur', () => { loc.value = loc.value.split(',')[0].trim(); });
+  const tenantBtn = document.getElementById('tenant-btn');
+  const landlordBtn = document.getElementById('landlord-btn');
+  const userTypeInput = document.getElementById('user_type');
+  const loginHeading = document.getElementById('login-heading');
+
+  // Optional: help info below buttons
+  const helpInfo = document.getElementById('help-info');
+
+  function setUserType(type) {
+  userTypeInput.value = type;
+
+  if(type === 'tenant') {
+    tenantBtn.classList.add('active-type');
+    landlordBtn.classList.remove('active-type');
+    loginHeading.textContent = 'Tenant Log In';
+    if(helpInfo) helpInfo.textContent = 'Select "Landlord" to access your landlord dashboard.';
+  } else {
+    landlordBtn.classList.add('active-type');
+    tenantBtn.classList.remove('active-type');
+    loginHeading.textContent = 'Landlord Log In';
+    if(helpInfo) helpInfo.textContent = 'Ensure you log in as a landlord to manage your properties.';
+  }
+}
+
+
+  // Click events
+  tenantBtn.addEventListener('click', () => setUserType('tenant'));
+  landlordBtn.addEventListener('click', () => setUserType('landlord'));
+
+  // Initialize toggle state on page load
+  setUserType(userTypeInput.value || 'tenant');
 </script>
+
+
+<script>
+function togglePassword(id) {
+  const input = document.getElementById(id);
+  const btn = input.nextElementSibling;
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+</script>
+
 </body>
 </html>

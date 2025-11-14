@@ -156,3 +156,14 @@ body {
     color: #000;
     letter-spacing: -.3px;
 }
+
+/* Smart suggestion box / helper text */
+.search-helper {
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    color: #444; /* dark gray instead of blue */
+    background: #f7f7f7; /* subtle background */
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}

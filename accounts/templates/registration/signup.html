@@ -45,6 +45,32 @@
       position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%);
       background: none; border: none; color: var(--text); cursor: pointer; font-size: 1.1rem;
     }
+    .user-type-toggle {
+  display: flex;
+  gap: 1rem;
+}
+
+.user-type-toggle input[type="radio"] {
+  display: none; /* hide the radio buttons */
+}
+
+.user-type-toggle label {
+  padding: 0.7rem 1.5rem;
+  border: 2px solid #000;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+  color: #000;
+  font-weight: 500;
+  text-align: center;
+}
+
+.user-type-toggle input[type="radio"]:checked + label {
+  background: #000; /* black fill for selected */
+  color: #fff;      /* white text for selected */
+}
+
   </style>
 </head>
 
@@ -102,10 +128,17 @@
     <!-- user type -->
     <div class="mb-3">
       <label for="id_user_type" class="form-label">I am a:</label>
-      <select name="user_type" id="id_user_type" class="form-control form-control-lg" required>
-        <option value="tenant" {% if form.user_type.value == "tenant" %}selected{% endif %}>Tenant</option>
-        <option value="landlord" {% if form.user_type.value == "landlord" %}selected{% endif %}>Landlord</option>
-      </select>
+        <div class="user-type-toggle">
+    <input type="radio" name="user_type" id="tenant" value="tenant"
+           {% if form.user_type.value == "tenant" %}checked{% endif %}>
+    <label for="tenant">Tenant</label>
+
+    <input type="radio" name="user_type" id="landlord" value="landlord"
+           {% if form.user_type.value == "landlord" %}checked{% endif %}>
+    <label for="landlord">Landlord</label>
+  </div>
+
+
       {% if form.user_type.errors %}<div class="invalid-feedback d-block">{{ form.user_type.errors|join:", " }}</div>{% endif %}
     </div>
 

@@ -3,35 +3,68 @@
 <head>
   <meta charset="utf-8">
   <title>Log In – iRent ProSpace</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   {% load static %}
-  <link rel="stylesheet" href="{% static 'listings/style.css' %}">
+  <style>
+    :root { --bg: #fafafa; --paper: #ffffff; --text: #111; --line: #e6e6e6; --accent: #000; }
+    body        { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+    /* bigger card */
+    .login-card { max-width: 480px; margin: 4rem auto; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 3rem 3.5rem; box-shadow: 0 10px 40px rgba(0,0,0,.06); }
+    /* bigger button */
+    .btn-login  {
+      background: var(--accent); color: #fff; border: 1px solid var(--accent);
+      border-radius: 18px; font-weight: 500; padding: 0.85rem 1.75rem; font-size: 1.1rem;
+      transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+    }
+    .btn-login:hover {
+      transform: scale(1.05); background: transparent; color: var(--accent); border-color: var(--accent);
+    }
+    /* bigger inputs */
+    .form-control, .form-control:focus {
+      border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--text);
+      padding: 0.9rem 1.1rem; font-size: 1.05rem;
+    }
+    .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,0,0,.1); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    /* header bar */
+    .top-bar { background: rgba(255,255,255,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+    .top-bar a { font-weight: 600; }
+  </style>
 </head>
-<body>
-<nav class="navbar navbar-custom">
-  <div class="container">
+<body class="d-flex align-items-center py-5">
+
+<!-- TOP HEADER -->
+<nav class="navbar navbar-light top-bar fixed-top px-3">
+  <div class="container-fluid">
     <a class="navbar-brand fw-700" href="{% url 'home' %}">iRent ProSpace</a>
+    <a class="btn btn-sm btn-outline-dark" href="{% url 'home' %}">Home</a>
   </div>
 </nav>
 
-<div class="container my-5" style="max-width: 450px">
-  <h2 class="mb-4">Log In</h2>
-
-  {% if form.errors %}
-    <div class="alert alert-danger">Invalid username or password.</div>
-  {% endif %}
+<div class="login-card">
+  <h2 class="mb-4 text-center">Log In</h2>
 
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-accent w-100">Log In</button>
+    <!-- wide inputs, placeholder text only -->
+    <div class="mb-3">
+      <input type="text" name="username" id="id_username" class="form-control form-control-lg" placeholder="Username" required autofocus>
+    </div>
+    <div class="mb-4">
+      <input type="password" name="password" id="id_password" class="form-control form-control-lg" placeholder="Password" required>
+    </div>
+    <button type="submit" class="btn btn-login w-100">Log In</button>
   </form>
 
-  <p class="text-center mt-3">
-    Don’t have an account? <a href="{% url 'signup' %}">Sign up</a>
-  </p>
+  <p class="text-center mt-4 mb-0">Already have an account? <a href="{% url 'signup' %}">Sign up</a></p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- keep location short (if field exists) -->
+<script>
+  const loc = document.querySelector('#id_location');
+  if (loc) loc.addEventListener('blur', () => { loc.value = loc.value.split(',')[0].trim(); });
+</script>
 </body>
 </html>

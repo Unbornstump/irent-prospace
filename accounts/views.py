@@ -8,21 +8,35 @@ from accounts.models import Profile
 from listings.models import Property
 
 
+
+
+
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            ut = form.cleaned_data.get('user_type')
-            if ut == 'landlord':
+            user_type = form.cleaned_data.get('user_type')
+
+            # Create profile for landlords
+            if user_type == 'landlord':
                 Profile.objects.create(user=user, user_type='landlord')
-                login(request, user)
-                return redirect('landlord_upload')   # landlords go straight to upload
-            # tenants
+
+            # Log the user in (both tenants and landlords)
             login(request, user)
-            return redirect('home')                  # tenants go back to homepage
-    else:
-        form = SignUpForm()
+
+            # For landlords: show loading banner in signup.html
+            if user_type == 'landlord':
+                return render(request, 'registration/signup.html', {'created': True})
+
+            # Tenants: go to homepage
+            return redirect('home')
+
+        # Form invalid → redisplay with errors
+        return render(request, 'registration/signup.html', {'form': form})
+
+    # GET request → show empty form
+    form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
 
 

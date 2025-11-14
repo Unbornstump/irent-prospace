@@ -3,44 +3,181 @@
 <head>
   <meta charset="utf-8">
   <title>Sign Up – iRent ProSpace</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   {% load static %}
-  <link rel="stylesheet" href="{% static 'listings/style.css' %}">
+  <style>
+    :root { --bg: #fafafa; --paper: #ffffff; --text: #111; --line: #e6e6e6; --accent: #000; --error: #b00020; }
+    body        { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+    .signup-card { max-width: 480px; margin: 4rem auto; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 3rem 3.5rem; box-shadow: 0 10px 40px rgba(0,0,0,.06); }
+    .btn-signup  {
+      background: var(--accent); color: #fff; border: 1px solid var(--accent);
+      border-radius: 18px; font-weight: 500; padding: 0.85rem 1.75rem; font-size: 1.1rem;
+      transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+    }
+    .btn-signup:hover {
+      transform: scale(1.05); background: transparent; color: var(--accent); border-color: var(--accent);
+    }
+    .form-control, .form-control:focus {
+      border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--text);
+      padding: 0.9rem 1.1rem; font-size: 1.05rem;
+    }
+    .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,0,0,.1); }
+    .is-invalid { border-color: var(--error) !important; }
+    .invalid-feedback { color: var(--error); font-size: 0.9rem; margin-top: 0.25rem; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .top-bar { background: rgba(255,255,255,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+    .top-bar a { font-weight: 600; }
+    /* loading bar */
+    .loading-bar { max-width: 480px; margin: 2rem auto 0; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 1.25rem 1.5rem; text-align: center; }
+    .loading-text { font-weight: 500; margin-bottom: 0.75rem; }
+    .loading-track { width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
+    .loading-fill { height: 100%; background: var(--accent); width: 0; animation: load 2s linear forwards; }
+    @keyframes load { to { width: 100%; } }
+    /* password tips outside card */
+    .hints-box { max-width: 480px; margin: 2rem auto 0; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem 2rem; }
+    .hints-box h6 { font-weight: 600; margin-bottom: 0.5rem; }
+    .hints-box ul { margin: 0; padding-left: 1.2rem; font-size: 0.95rem; }
+    /* eye icon */
+    .password-wrap { position: relative; }
+    .password-wrap .eye {
+      position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: var(--text); cursor: pointer; font-size: 1.1rem;
+    }
+  </style>
 </head>
-<body>
-<nav class="navbar navbar-custom">
-  <div class="container">
-    <a class="navbar-brand" href="{% url 'home' %}">iRent ProSpace</a>
+
+<body class="d-flex flex-column min-vh-100 py-5">
+  <!-- DEBUG -->
+
+
+<!-- TOP HEADER -->
+<nav class="navbar navbar-light top-bar fixed-top px-3">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-700" href="{% url 'home' %}">iRent ProSpace</a>
+    <a class="btn btn-sm btn-outline-dark" href="{% url 'home' %}">Home</a>
   </div>
 </nav>
 
-<div class="container mt-4" style="max-width: 500px">
-  <h2>Create Account</h2>
+<!-- LOADING BAR (only after successful creation) -->
+{% if created %}
+<div class="loading-bar mt-5">
+  <div class="loading-text">Taking you to upload section…</div>
+  <div class="loading-track"><div class="loading-fill"></div></div>
+</div>
+<script>
+  setTimeout(() => { window.location.href = "{% url 'landlord_upload' %}"; }, 2000);
+</script>
+{% else %}
 
-  {% if form.errors %}
-    <div class="alert alert-danger">
-      <ul class="mb-0">
-      {% for field in form %}
-        {% for error in field.errors %}
-          <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-        {% endfor %}
-      {% endfor %}
-      {% for error in form.non_field_errors %}
-        <li>{{ error }}</li>
-      {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
 
-  <form method="post">
+
+
+<!-- SIGN-UP CARD -->
+<div class="signup-card mt-5">
+  <div class="info-banner mb-4">
+    Create your account, then upload your rentals for listing.
+  </div>
+
+  <h2 class="mb-4 text-center">Create Account</h2>
+
+  <form method="post" id="signupForm" novalidate>
     {% csrf_token %}
-    {{ form.as_p }}
-      <button class="btn btn-accent w-100">Sign Up</button>
+
+    <!-- username -->
+    <div class="mb-3">
+      <input type="text" name="username" id="id_username" class="form-control form-control-lg"
+             placeholder="Username" value="{{ form.username.value|default_if_none:'' }}" required autofocus>
+      {% if form.username.errors %}<div class="invalid-feedback d-block">{{ form.username.errors|join:", " }}</div>{% endif %}
+    </div>
+
+    <!-- email -->
+    <div class="mb-3">
+      <input type="email" name="email" id="id_email" class="form-control form-control-lg"
+             placeholder="Email address" value="{{ form.email.value|default_if_none:'' }}" required>
+      {% if form.email.errors %}<div class="invalid-feedback d-block">{{ form.email.errors|join:", " }}</div>{% endif %}
+    </div>
+
+    <!-- user type -->
+    <div class="mb-3">
+      <label for="id_user_type" class="form-label">I am a:</label>
+      <select name="user_type" id="id_user_type" class="form-control form-control-lg" required>
+        <option value="tenant" {% if form.user_type.value == "tenant" %}selected{% endif %}>Tenant</option>
+        <option value="landlord" {% if form.user_type.value == "landlord" %}selected{% endif %}>Landlord</option>
+      </select>
+      {% if form.user_type.errors %}<div class="invalid-feedback d-block">{{ form.user_type.errors|join:", " }}</div>{% endif %}
+    </div>
+
+    <!-- password1 -->
+    <div class="mb-3 password-wrap">
+      <input type="password" name="password1" id="id_password1" class="form-control form-control-lg"
+             placeholder="Password" required>
+      <button type="button" class="eye" onclick="togglePwd('id_password1')">👁</button>
+      {% if form.password1.errors %}<div class="invalid-feedback d-block">{{ form.password1.errors|join:", " }}</div>{% endif %}
+    </div>
+
+    <!-- password2 -->
+    <div class="mb-4 password-wrap">
+      <input type="password" name="password2" id="id_password2" class="form-control form-control-lg"
+             placeholder="Confirm Password" required>
+      <button type="button" class="eye" onclick="togglePwd('id_password2')">👁</button>
+      {% if form.password2.errors %}<div class="invalid-feedback d-block">{{ form.password2.errors|join:", " }}</div>{% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-signup w-100">Create Account</button>
   </form>
 
-  <p class="text-center mt-3">
-    Already have an account? <a href="{% url 'user_login' %}">Log in</a>
-  </p>
+  <p class="text-center mt-4 mb-0">Already have an account? <a href="{% url 'user_login' %}">Log in</a></p>
 </div>
+
+<!-- PASSWORD HINTS -->
+<div class="hints-box">
+  <h6>Password tips</h6>
+  <ul class="mb-0">
+    <li>Can’t be too similar to your other personal information</li>
+    <li>At least 8 characters</li>
+    <li>Not a commonly used password</li>
+    <li>Can’t be entirely numeric</li>
+  </ul>
+</div>
+{% endif %}
+
+<!-- keep location short (if field exists) -->
+<script>
+  // Shorten location field if it exists
+  const loc = document.querySelector('#id_location');
+  if (loc) {
+    loc.addEventListener('blur', () => {
+      loc.value = loc.value.split(',')[0].trim();
+    });
+  }
+
+  // Password eye toggle
+  function togglePwd(id) {
+    const inp = document.getElementById(id);
+    const btn = inp.nextElementSibling;
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      inp.type = 'password';
+      btn.textContent = '👁';
+    }
+  }
+
+  // ---------------------------------------------------------
+  // CLEAN + RELIABLE SIGNUP SUBMISSION HANDLING
+  // ---------------------------------------------------------
+
+  
+
+  // ---------------------------------------------------------
+  // LOADING BAR + REDIRECT
+  // ---------------------------------------------------------
+
+  
+</script>
+
 </body>
 </html>

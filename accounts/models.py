@@ -6,9 +6,12 @@ class Profile(models.Model):
         ('tenant', 'Tenant'),
         ('landlord', 'Landlord'),
     )
-    user   = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone  = models.CharField(max_length=15, blank=True)
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=15, blank=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPES, default='tenant')
+    image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username} – {self.user_type}"

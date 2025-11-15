@@ -167,3 +167,20 @@ body {
     border-radius: 6px;
     border: 1px solid #e0e0e0;
 }
+<style>
+/* ---------- MOBILE SCALES ---------- */
+@media (max-width: 576px) {
+  /* bigger tap targets */
+  .btn-login, .btn-signup, .btn-accent {
+    padding: 1rem 1.5rem; font-size: 1.1rem; border-radius: 12px;
+  }
+  /* bigger inputs */
+  .form-control { padding: 1rem; font-size: 1.05rem; }
+  /* bigger cards */
+  .login-card, .signup-card { max-width: 95vw; padding: 2rem; }
+  /* bigger header text */
+  h1, h2 { font-size: 1.75rem; }
+  /* bigger top-bar buttons */
+  .top-bar .btn { padding: 0.6rem 1rem; font-size: 1rem; }
+}
+</style>

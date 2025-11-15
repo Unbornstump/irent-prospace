@@ -7,180 +7,849 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   {% load static %}
   <link rel="stylesheet" href="{% static 'listings/style.css' %}">
-  <!-- Add this in your <head> to load fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Montserrat:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-  /* ================= HERO & LAYOUT ================= */
-.hero { 
-    background: #fff; 
-    padding: 3rem 0 2rem; 
+ /* =========================================================
+   GLOBAL BASE
+========================================================= */
+
+* {
+    box-sizing: border-box;
 }
 
-.search-bar { 
-    background: #fff; 
-    border: 1px solid #e6e6e6; 
-    border-radius: 12px; 
-    padding: 1.25rem; 
-    box-shadow: 0 4px 16px rgba(0,0,0,.04); 
-    min-height: 100vh; 
+body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    color: #111;
+    font-family: "Inter", sans-serif;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
-.results-scroll { 
-    min-height: 100vh; 
+body.dark-theme {
+    background: #111;
+    color: #fff;
 }
 
-/* ================= FORM ELEMENTS ================= */
-.form-control,
-.form-select {
-    font-size: 1.1rem;
-    padding: 0.75rem 1rem;
-    height: auto; /* let padding decide height */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
 
-/* ================= FILTER LABELS ================= */
-.filter-label {
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin-top: 1rem;
-    display: inline-block;
+/* Removes Bootstrap blue hover on mobile */
+button, a, input, select {
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* ================= PILLS & CHIPS ================= */
-.price-pill,
-.chip {
-    font-size: 1rem;
-    padding: 0.8rem 1.6rem;
-    border-radius: 30px;
-    margin: 0.4rem 0.3rem;
-    display: inline-flex;
-    align-items: center;
-    border: 1px solid #d0d0d0;
+/* =========================================================
+   NAVBAR — Desktop & Mobile (FIXED DARK MODE)
+========================================================= */
+
+.navbar {
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+    backdrop-filter: blur(10px);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark-theme .navbar {
+    background: #000 !important;
+    box-shadow: 0 2px 8px rgba(255,255,255,0.06);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: #000;
+    transition: color 0.3s ease;
+}
+
+.dark-theme .navbar-brand {
+    color: #fff !important;
+}
+
+.dark-theme .text-muted {
+    color: #999 !important;
+}
+
+/* Fix: Make all nav links white in dark mode */
+.dark-theme .nav-link,
+.dark-theme .navbar-nav .nav-link {
+    color: #fff !important;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    background: transparent;
+    border: 2px solid #000;
+    color: #000;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
     cursor: pointer;
-    transition: transform .2s ease, background .2s ease, color .2s ease, border .2s ease;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    margin-left: 1rem;
 }
 
-/* Hover & active states */
-.price-pill:hover,
-.chip:hover,
-.price-pill.active,
-.chip.active {
-    transform: scale(1.08);
+.theme-toggle:hover {
+    background: #000;
+    color: #fff;
 }
 
-/* Active selected style */
-.price-pill.active,
-.chip.active {
-    border: 2px solid #000 !important;
-    background: transparent !important;
-    color: #000 !important;
+.dark-theme .theme-toggle {
+    border-color: #fff;
+    color: #fff;
 }
 
-/* ================= BUTTONS ================= */
-/* Base hover animation */
+.dark-theme .theme-toggle:hover {
+    background: #fff;
+    color: #000;
+}
+
+@media (max-width: 991px) {
+    .theme-toggle {
+        width: calc(100% - 2rem);
+        margin: 0.5rem auto;
+        display: block;
+    }
+}
+
+/* Hamburger icon better looking */
+.navbar-toggler {
+    border: none !important;
+    position: relative;
+    z-index: 1051;
+}
+.navbar-toggler:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+.navbar-toggler-icon {
+    filter: brightness(0);
+}
+
+.dark-theme .navbar-toggler-icon {
+    filter: brightness(1) invert(1);
+}
+
+/* Premium dropdown container */
+@media (max-width: 992px) {
+    #navbarMenu {
+        background: #fff;
+        border-radius: 14px;
+        padding: 1rem 1.2rem;
+        margin-top: 0.8rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        position: relative;
+        z-index: 1051;
+    }
+    
+    .dark-theme #navbarMenu {
+        background: #1a1a1a;
+        box-shadow: 0 8px 24px rgba(255,255,255,0.12);
+    }
+}
+
+/* Nav links */
+.nav-link.hover-btn {
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    transition: all 0.25s ease;
+}
+
+.nav-link.hover-btn:hover {
+    background: rgba(0,0,0,0.06);
+    transform: scale(1.04);
+}
+
+.dark-theme .nav-link.hover-btn:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+/* Mobile full-width buttons */
+@media (max-width: 576px) {
+    .navbar-nav .btn,
+    .navbar-nav .btn-signup,
+    .navbar-nav .btn-login {
+        width: 100% !important;
+        margin: 0.3rem 0 !important;
+        text-align: center;
+        display: block;
+    }
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
 .hover-btn {
-    transition: transform .2s ease, background .2s ease, color .2s ease, border .2s ease;
-    border: 2px solid transparent;
-    cursor: pointer;
+    transition: transform .2s ease, background .2s ease, color .2s ease;
 }
 
-/* Generic hover effect */
 .hover-btn:hover {
     transform: scale(1.05);
 }
 
-/* Accent button (black bg / white text) */
-.btn-accent.hover-btn {
-    background-color: #000;
+/* Solid black */
+.btn-accent {
+    background: #000;
     color: #fff;
-    border-color: #000;
-    font-weight: 500;
+    border: 2px solid #000;
 }
-
-.btn-accent.hover-btn:hover {
-    background-color: #fff !important;
+.btn-accent:hover {
+    background: #fff !important;
     color: #000 !important;
-    border-color: #000 !important;
 }
 
-/* Outline dark button (white bg / black text / black border) */
-.btn-outline-dark.hover-btn {
-    background-color: transparent;
+.dark-theme .btn-accent {
+    background: #fff;
     color: #000;
-    border-color: #000;
-    font-weight: 500;
+    border: 2px solid #fff;
 }
 
-.btn-outline-dark.hover-btn:hover {
-    background-color: #000 !important;
+.dark-theme .btn-accent:hover {
+    background: #000 !important;
     color: #fff !important;
-    border-color: #000 !important;
 }
 
-/* Hero / large buttons */
-.btn-lg.hover-btn {
-    font-size: 1.2rem;
-    padding: 0.8rem 1.5rem;
+/* Outline black */
+.btn-outline-dark {
+    background: transparent;
+    border: 2px solid #000;
+    color: #000;
+}
+.btn-outline-dark:hover {
+    background: #000 !important;
+    color: #fff !important;
 }
 
-/* ================= NAV-LINKS ================= */
-.nav-link.hover-btn {
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
+.dark-theme .btn-outline-dark {
+    border-color: #fff;
+    color: #fff;
 }
 
-.nav-link.hover-btn:hover {
-    background-color: rgba(0,0,0,0.05);
+.dark-theme .btn-outline-dark:hover {
+    background: #fff !important;
     color: #000 !important;
 }
-/* ================= SIGN UP / LOG IN BUTTONS ================= */
-.btn-signup,
-.btn-login {
-    font-family: 'Poppins', 'Montserrat', sans-serif;
-    font-size: 1.25rem;       /* was 1.6rem — reduced */
-    padding: 0.9rem 2.2rem;   /* was 1.2rem 3rem — reduced */
-    border-radius: 32px;      /* slightly smaller */
+
+/* Special auth buttons */
+.btn-signup, .btn-login {
+    font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    transition: transform .2s ease, background .2s ease, color .2s ease, border .2s ease;
-    cursor: pointer;
+    font-size: 1.25rem;
+    padding: 1rem 2rem;
+    border-radius: 32px;
+    transition: 0.25s ease;
+    margin: 0 0.5rem;
 }
 
-/* Hover effects */
-.btn-signup:hover,
-.btn-login:hover {
-    transform: scale(1.08);   /* slightly reduced from 1.12 */
-}
-
-/* Sign Up - solid black */
 .btn-signup {
-    background-color: #000;
+    background: #000;
     color: #fff;
     border: 2px solid #000;
 }
-
 .btn-signup:hover {
-    background-color: #fff !important;
+    background: #fff !important;
     color: #000 !important;
 }
 
-/* Log In - outlined */
+.dark-theme .btn-signup {
+    background: #fff;
+    color: #000;
+    border: 2px solid #fff;
+}
+
+.dark-theme .btn-signup:hover {
+    background: #000 !important;
+    color: #fff !important;
+    border-color: #fff !important;
+}
+
 .btn-login {
-    background-color: transparent;
+    background: transparent;
     color: #000;
     border: 2px solid #000;
 }
-
 .btn-login:hover {
-    background-color: #000 !important;
+    background: #000 !important;
     color: #fff !important;
 }
 
+.dark-theme .btn-login {
+    color: #fff;
+    border-color: #fff;
+}
+
+.dark-theme .btn-login:hover {
+    background: #fff !important;
+    color: #000 !important;
+    border-color: #fff !important;
+}
+
+/* =========================================================
+   HERO SECTION
+========================================================= */
+
+.hero {
+    background: #fff;
+    padding-top: 4rem;
+    padding-bottom: 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    transition: background 0.3s ease;
+}
+
+.dark-theme .hero {
+    background: #111;
+}
+
+.hero h2 {
+    font-size: 6.5rem;
+    font-weight: 300;
+    letter-spacing: -0.04em;
+    margin: 0.3rem 0;
+    transition: color 0.3s ease;
+    color: #000;
+}
+.hero h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 2rem;
+    transition: color 0.3s ease;
+    color: #000;
+}
+
+.dark-theme .hero h2,
+.dark-theme .hero h1 {
+    color: #fff;
+}
+
+.hero hr {
+    border-top: 2px solid #e5e5e5 !important;
+    transition: border-color 0.3s ease;
+}
+
+.dark-theme .hero hr {
+    border-top-color: #444 !important;
+}
+
+/* Mobile-rescaled hero */
+@media (max-width: 576px) {
+    .hero h2 {
+        font-size: 2.4rem !important;
+        line-height: 1.1;
+    }
+    .hero h1 {
+        font-size: 2rem !important;
+        margin-bottom: 1.3rem;
+    }
+}
+
+/* Stars background container */
+.animated-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Each star */
+.animated-stars .star {
+  position: absolute;
+  background: #000;
+  border-radius: 50%;
+  opacity: 0.5;
+  width: 2px;
+  height: 2px;
+  animation: twinkle 3s infinite ease-in-out;
+  transition: background 0.3s ease;
+}
+
+.dark-theme .animated-stars .star {
+  background: #fff;
+}
+
+/* Twinkle animation */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 0.8; transform: scale(1.2); }
+}
+
+/* Ensure all hero content is above stars */
+.hero-content {
+  position: relative;
+  z-index: 10;
+}
+
+/* Specifically fix the form and its children */
+#filters,
+#filters * {
+  position: relative;
+  z-index: 100;
+}
+
+/* =========================================================
+   SEARCH BAR (floating white box)
+========================================================= */
+
+.search-bar {
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 16px;
+    padding: 3rem 2rem;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.04);
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.dark-theme .search-bar {
+    background: #1a1a1a;
+    border-color: #333;
+}
+
+.form-control,
+.form-select {
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.dark-theme .form-control,
+.dark-theme .form-select {
+    background: #222;
+    color: #fff;
+    border-color: #444;
+}
+
+.dark-theme .form-control::placeholder {
+    color: #999;
+}
+
+.dark-theme .form-label {
+    color: #fff;
+}
+
+/* Smaller on mobile */
+@media (max-width: 576px) {
+    .form-control, .form-select {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+/* Location Autocomplete Dropdown */
+.location-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+    margin-top: 0.5rem;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 1000;
+    display: none;
+}
+
+.dark-theme .location-suggestions {
+    background: #1a1a1a;
+    border-color: #333;
+}
+
+.location-suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.location-suggestion-item:hover {
+    background: #f5f5f5;
+}
+
+.dark-theme .location-suggestion-item:hover {
+    background: #2a2a2a;
+}
+
+/* =========================================================
+   FILTER PILLS & ROOM CHIPS
+========================================================= */
+
+.price-pill,
+.chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 40px;
+    border: 1px solid #d0d0d0;
+    background: #fff;
+    margin: 0.3rem;
+    cursor: pointer;
+    transition: all .25s ease;
+}
+
+.dark-theme .price-pill,
+.dark-theme .chip {
+    background: #222;
+    border-color: #444;
+    color: #fff;
+}
+
+.price-pill:hover,
+.chip:hover {
+    transform: scale(1.08);
+}
+
+.price-pill.active,
+.chip.active {
+    border: 2px solid #000 !important;
+    background: #fff !important;
+    color: #000 !important;
+}
+
+.dark-theme .price-pill.active,
+.dark-theme .chip.active {
+    border: 2px solid #fff !important;
+    background: #000 !important;
+    color: #fff !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 576px) {
+    .price-pill, .chip {
+        padding: 0.55rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Manual Price Input Toggle */
+.manual-price-toggle {
+    margin-top: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #000;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0.5rem;
+    display: inline-block;
+}
+
+.dark-theme .manual-price-toggle {
+    color: #fff;
+}
+
+#manual-price-input {
+    margin-top: 1rem;
+}
+
+/* Form Validation Error Messages */
+.form-error {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: none;
+    font-weight: 500;
+}
+
+.form-error.show {
+    display: block;
+}
+
+.dark-theme .form-error {
+    color: #ff6b6b;
+}
+
+/* =========================================================
+   RESULTS SECTION
+========================================================= */
+
+#results {
+    padding-top: 3rem;
+    position: relative;
+    z-index: 20;
+    transition: background 0.3s ease;
+}
+
+.dark-theme #results {
+    background: #111;
+}
+
+.card {
+    border-radius: 14px;
+    overflow: hidden;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.dark-theme .card {
+    background: #1a1a1a;
+    border-color: #333;
+}
+
+.card-body {
+    padding: 1rem 1.2rem;
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+}
+
+.dark-theme .card-title {
+    color: #fff;
+}
+
+.dark-theme .card-text {
+    color: #999 !important;
+}
+
+/* =========================================================
+   SMART AI BOX - PROFESSIONAL VERSION
+========================================================= */
+
+#smart-ai {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border-left: 4px solid #000;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    transition: background 0.3s ease, border-color 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.dark-theme #smart-ai {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border-left-color: #fff;
+    box-shadow: 0 2px 8px rgba(255,255,255,0.05);
+}
+
+#smart-ai p {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #495057;
+    transition: color 0.3s ease;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.dark-theme #smart-ai p {
+    color: #cbd5e0;
+}
+
+#smart-ai .ai-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.dark-theme #smart-ai .ai-label {
+    color: #a0aec0;
+}
+
+/* =========================================================
+   MOBILE GLOBAL IMPROVEMENTS
+========================================================= */
+
+@media (max-width: 576px) {
+    html {
+        font-size: 88%;
+    }
+
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .hero .btn {
+        font-size: 1.1rem;
+        padding: 0.85rem 1.2rem;
+        border-radius: 14px;
+        width: 100%;
+    }
+
+    .search-bar {
+        padding: 2rem 1rem;
+    }
+}
+
+/* ===========================
+   MOBILE MENU (AIRBNB STYLE) - FIXED Z-INDEX
+   =========================== */
+
+.mobile-menu {
+    background: #fff;
+    padding: 1.2rem 0;
+    transition: background 0.3s ease;
+}
+
+.dark-theme .mobile-menu {
+    background: #1a1a1a;
+}
+
+@media (max-width: 991px) {
+    .mobile-menu {
+        padding: 1rem 0 2.5rem;
+        border-top: 1px solid #e5e5e5;
+        background: #ffffff;
+        position: relative;
+        z-index: 1051;
+    }
+    
+    .dark-theme .mobile-menu {
+        background: #1a1a1a;
+        border-top-color: #333;
+    }
+
+    .mobile-item {
+        display: block;
+        padding: 1rem 1.3rem;
+        font-size: 1.15rem;
+        color: #111 !important;
+        text-decoration: none;
+        border-radius: 12px;
+        transition: background .2s ease, transform .2s ease, color 0.3s ease;
+        margin-bottom: 0.5rem;
+    }
+    
+    .dark-theme .mobile-item {
+        color: #fff !important;
+    }
+
+    .mobile-item:hover {
+        background: #f2f2f2;
+        transform: translateX(4px);
+    }
+    
+    .dark-theme .mobile-item:hover {
+        background: #2a2a2a;
+    }
+
+    .mobile-divider {
+        width: 100%;
+        height: 1px;
+        background: #e0e0e0;
+        margin: 1.5rem 0;
+        transition: background 0.3s ease;
+    }
+    
+    .dark-theme .mobile-divider {
+        background: #333;
+    }
+
+    .mobile-btn {
+        width: calc(100% - 2rem);
+        margin: 0.6rem auto;
+        padding: 1rem;
+        display: block;
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-radius: 12px;
+        transition: all .2s ease;
+    }
+
+    .mobile-btn.btn-login {
+        background: #fff;
+        color: #000;
+        border: 2px solid #000;
+    }
+
+    .mobile-btn.btn-login:hover {
+        background: #000 !important;
+        color: #fff !important;
+    }
+    
+    .dark-theme .mobile-btn.btn-login {
+        background: #1a1a1a;
+        color: #fff;
+        border-color: #fff;
+    }
+
+    .mobile-btn.btn-signup {
+        background: #000;
+        color: #fff;
+        border: 2px solid #000;
+    }
+
+    .mobile-btn.btn-signup:hover {
+        background: #fff !important;
+        color: #000 !important;
+    }
+    
+    .dark-theme .mobile-btn.btn-signup {
+        background: #fff;
+        color: #000;
+        border-color: #fff;
+    }
+}
+
+/* Improve mobile toggle button */
+.navbar-toggler {
+    border: none !important;
+}
+
+.navbar-toggler-icon {
+    background-image: none !important;
+    width: 24px;
+    height: 2px;
+    background-color: #000;
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.dark-theme .navbar-toggler-icon {
+    background-color: #fff;
+}
+
+.navbar-toggler-icon::before,
+.navbar-toggler-icon::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 24px;
+    height: 2px;
+    background-color: #000;
+    transition: .3s;
+}
+
+.dark-theme .navbar-toggler-icon::before,
+.dark-theme .navbar-toggler-icon::after {
+    background-color: #fff;
+}
+
+.navbar-toggler-icon::before {
+    top: -7px;
+}
+
+.navbar-toggler-icon::after {
+    top: 7px;
+}
 
 </style>
+
 </head>
 <body>
-<!-- MINIMAL HEADER -->
 <!-- ===== PROFESSIONAL NAVBAR v2 ===== -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 sticky-top">
   <div class="container">
@@ -196,290 +865,153 @@
     </button>
 
     <!-- NAV LINKS -->
-    <div class="collapse navbar-collapse justify-content-end" id="navbarMenu">
-      <ul class="navbar-nav align-items-center gap-2 gap-lg-3">
+    <div class="collapse navbar-collapse mobile-menu justify-content-end" id="navbarMenu">
+      <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
         <li class="nav-item">
-          <a class="nav-link text-dark hover-btn px-3 py-2" href="{% url 'about' %}">About</a>
+          <a class="nav-link" href="{% url 'about' %}">About</a>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link text-dark hover-btn px-3 py-2" href="{% url 'contact' %}">Contact Us</a>
+          <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
         </li>
 
         {% if user.is_authenticated %}
           {% if user.profile.user_type == 'landlord' %}
             <li class="nav-item">
-              <a class="btn btn-outline-dark btn-sm hover-btn" href="{% url 'my_properties' %}">My Properties</a>
+              <a class="nav-link" href="{% url 'my_properties' %}">My Properties</a>
             </li>
+
             <li class="nav-item">
-              <a class="btn btn-accent btn-sm hover-btn" href="{% url 'landlord_upload' %}">Add Property</a>
+              <a class="nav-link" href="{% url 'landlord_upload' %}">Add Property</a>
             </li>
           {% endif %}
-          <li class="nav-item">
-            <a class="btn btn-outline-dark btn-sm hover-btn" href="{% url 'logout' %}">Logout</a>
-          </li>
-        {% else %}
-          <li class="nav-item">
-            <a class="btn-signup" href="{% url 'signup' %}">Sign Up</a>
-          </li>
-          <li class="nav-item">
-            <a class="btn-login" href="{% url 'user_login' %}">Log In</a>
 
+          <div class="mobile-divider d-lg-none"></div>
+
+          <li class="nav-item">
+            <a class="btn-login mobile-btn" href="{% url 'logout' %}">Logout</a>
+          </li>
+
+        {% else %}
+          <div class="mobile-divider d-lg-none"></div>
+
+          <li class="nav-item" style="margin-top: 0.5rem;">
+            <a class="btn-login mobile-btn" href="{% url 'user_login' %}">Log In</a>
+          </li>
+
+          <li class="nav-item" style="margin-top: 0.5rem;">
+            <a class="btn-signup mobile-btn" href="{% url 'signup' %}">Sign Up</a>
           </li>
         {% endif %}
+        
+        <!-- THEME TOGGLE -->
+        <li class="nav-item">
+          <button class="theme-toggle" onclick="toggleTheme()">
+            <span id="theme-icon">🌙</span>
+          </button>
+        </li>
       </ul>
     </div>
   </div>
 </nav>
 
-<!-- ===== NAVBAR STYLES & ANIMATIONS ===== -->
-<style>
-  /* Button & link hover effect */
-  .hover-btn {
-    transition: all 0.25s ease;
-    border: 2px solid transparent;
-  }
-/* Safe hover for nav links (not buttons) */
-.nav-link.hover-btn:hover {
-    background-color: rgba(0,0,0,0.06) !important;
-    color: #000 !important;
-    border-color: transparent !important;
-    transform: scale(1.05);
-}
-
-
-  /* Accent button */
-  .btn-accent {
-    background-color: #000;
-    color: #fff;
-    border: 2px solid #000;
-    font-weight: 500;
-  }
-
-  .btn-accent:hover {
-    background-color: #fff !important;
-    color: #000 !important;
-  }
-
-  /* Outline dark button */
-  .btn-outline-dark {
-    border: 2px solid #000;
-    color: #000;
-    font-weight: 500;
-    background-color: transparent;
-  }
-
-  .btn-outline-dark:hover {
-    background-color: #000 !important;
-    color: #fff !important;
-  }
-
-  /* Nav-link hover */
-  .nav-link.hover-btn {
-    border-radius: 8px;
-  }
-
-  /* Sticky + shadow effect */
-  .navbar.sticky-top {
-    backdrop-filter: blur(8px);
-    z-index: 1030;
-  }
-
-  /* Mobile spacing tweaks */
-  @media (max-width: 992px) {
-    .navbar-nav {
-      gap: 0.5rem;
-    }
-  }
-</style>
-
-<!-- HERO (tenants / anonymous only) -->
 {% if not is_landlord %}
-<!-- Google Inter font -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 <section class="hero" style="font-family: 'Inter', sans-serif; padding-top: 4rem;">
-  <div class="container text-center">
+  <div class="animated-stars" id="stars"></div>
 
-    <!-- Exact screenshot headline -->
-    
-<!-- 7 rem lighter exact-screenshot headline -->
-<h2 style="margin: 0; font-size: 7rem; font-weight: 400; letter-spacing: -0.04em; line-height: 1;">Find Your Perfect</h2>
-<h2 style="margin: 0; font-size: 7rem; font-weight: 400; letter-spacing: -0.04em; line-height: 1;">Rental-Where</h2>
-<h2 style="margin: 0 0 0.5rem 0; font-size: 7rem; font-weight: 300; letter-spacing: -0.04em; line-height: 1;">Dreams Meet Reality</h2>
+  <div class="container text-center position-relative hero-content">
+    <!-- Hero headlines and buttons -->
+    <h2 class="hero-title" style="margin: 0; font-size: 7rem; font-weight: 400; letter-spacing: -0.04em; line-height: 1;">Find Your Perfect</h2>
+    <h2 class="hero-title" style="margin: 0; font-size: 7rem; font-weight: 400; letter-spacing: -0.04em; line-height: 1;">Rental-Where</h2>
+    <h2 class="hero-title" style="margin: 0 0 0.5rem 0; font-size: 7rem; font-weight: 300; letter-spacing: -0.04em; line-height: 1;">Dreams Meet Reality</h2>
 
- <div style="height: 1.2rem; background: transparent;"></div>
-
-    <!-- Smooth separator line -->
     <hr class="mb-4" style="width: 80px; margin: 0 auto; border-top: 2px solid #e5e5e5;">
-
-    <!-- Big “Find what fits you” -->
     <h1 class="fw-700 mb-5" style="font-size: 4rem; letter-spacing: -1px;">Find what fits you</h1>
 
-      <!-- STACKED HOVER-ZOOM BUTTONS -->
     <div class="d-flex flex-column align-items-center gap-3 mb-5">
-      <a href="?show=all#results"
-         class="btn btn-outline-dark btn-lg px-4 hover-btn">
-        See all available rentals
-      </a>
-      <button class="btn btn-accent btn-lg px-4 hover-btn"
-              onclick="document.getElementById('filters').scrollIntoView({behavior:'smooth', block:'start'})">
-        Pick what fits you
-      </button>
+      <a href="?show=all#results" class="btn btn-outline-dark btn-lg px-4 hover-btn" style="min-width: 280px;">See all available rentals</a>
+      <button class="btn btn-accent btn-lg px-4 hover-btn" style="min-width: 280px;"
+              onclick="document.getElementById('filters').scrollIntoView({behavior:'smooth', block:'start'})">Pick what fits you</button>
     </div>
 
- <form method="get" id="filters" class="search-bar" style="padding: 12vh 2rem; min-height: 100vh;">
-  <!-- Row 1: Location + Bedrooms + Price -->
-  <div class="row g-3 mb-4 justify-content-center">
-    <div class="col-md-3">
-      <input id="location-input"
-             class="form-control form-control-sm"
-             type="text"
-             name="location"
-             placeholder="Search by location"
-             value="{{ request.GET.location }}"
-             autocomplete="off"
-             spellcheck="false" required>
-    </div>
-    <div class="col-md-2">
-      <select class="form-select form-select-sm" name="bedrooms" required >
-        {% for val, label in bedroom_choices %}
-          <option value="{{ val }}" {% if request.GET.bedrooms == val %}selected{% elif not request.GET.bedrooms and val == 'Single Room' %}selected{% endif %}>{{ label }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <div class="col-md-2">
-      <input class="form-control form-control-sm" type="number" name="price" placeholder="Price (KES)" min="0" value="{{ request.GET.price }}" required >
-    </div>
-  </div>
+    <!-- Filter Form -->
+    <form method="get" id="filters" class="search-bar" style="padding: 12vh 2rem; min-height: 100vh;">
+      <h3 class="mb-4 fw-600">Filter Your Search</h3>
+      
+      <!-- Location with Autocomplete -->
+      <div class="mb-4 position-relative">
+        <label for="location-input" class="form-label fw-500">Location</label>
+        <input type="text" class="form-control" id="location-input" name="location" placeholder="Start typing (e.g., Nairobi, Mombasa)..." value="{{ search_location }}" autocomplete="off">
+        <div class="form-error" id="location-error">Please enter a location</div>
+        <div class="location-suggestions" id="location-suggestions"></div>
+      </div>
 
-  <!-- Row 2: Price Pills -->
-  <div class="mb-3 d-flex flex-wrap justify-content-center">
-    <small class="text-muted filter-label">Filter by budget:</small>
-    <span class="price-pill" data-val="1-5k">KES 1 – 5 k</span>
-    <span class="price-pill" data-val="5-10k">KES 5 – 10 k</span>
-    <span class="price-pill" data-val="10-20k">KES 10 – 20 k</span>
-    <span class="price-pill" data-val="20k+">KES 20 k+</span>
-  </div>
+      <!-- Price Range Pills -->
+      <div class="mb-4">
+        <label class="form-label fw-500">Price Range (KES)</label>
+        <div class="d-flex flex-wrap gap-2">
+          <span class="price-pill" data-val="1-5k">1-5k</span>
+          <span class="price-pill" data-val="5-10k">5-10k</span>
+          <span class="price-pill" data-val="10-20k">10-20k</span>
+          <span class="price-pill" data-val="20k+">20k+</span>
+        </div>
+        <div class="manual-price-toggle" onclick="toggleManualPrice()">💡 Or enter exact price</div>
+        <div id="manual-price-input" style="display: none;">
+          <input type="number" class="form-control mt-2" id="price-input-manual" name="price_manual" placeholder="Enter price (e.g., 6000)" value="{{ search_price }}">
+        </div>
+        <div class="form-error" id="price-error">Please select or enter a price</div>
+        <input type="hidden" name="price" id="price-hidden" value="{{ search_price }}">
+      </div>
 
-  <!-- Row 3: Bedroom Chips -->
-  <div class="mb-4 d-flex flex-wrap justify-content-center">
-    <small class="text-muted filter-label">Preferred bedrooms:</small>
-     {% for val, label in bedroom_choices %}
-        <span class="chip" data-bed="{{ val }}">{{ label }}</span>
-     {% endfor %}
-  </div>
+      <!-- Bedrooms Chips -->
+      <div class="mb-4">
+        <label class="form-label fw-500">Bedrooms</label>
+        <div class="d-flex flex-wrap gap-2">
+          <span class="chip" data-bed="Single Room">Single Room</span>
+          <span class="chip" data-bed="Bedsitter">Bedsitter</span>
+          <span class="chip" data-bed="1 Bedroom">1 Bedroom</span>
+          <span class="chip" data-bed="2 Bedrooms">2 Bedrooms</span>
+          <span class="chip" data-bed="3 Bedrooms">3 Bedrooms</span>
+          <span class="chip" data-bed="4 Bedrooms">4 Bedrooms</span>
+          <span class="chip" data-bed="5 Bedrooms">5 Bedrooms</span>
+          <span class="chip" data-bed="Studio">Studio</span>
+        </div>
+        <div class="form-error" id="bedrooms-error">Please select number of bedrooms</div>
+        <select name="bedrooms" class="form-select mt-3" style="display: none;">
+          <option value="">Select bedrooms</option>
+          <option value="Single Room">Single Room</option>
+          <option value="Bedsitter">Bedsitter</option>
+          <option value="1 Bedroom">1 Bedroom</option>
+          <option value="2 Bedrooms">2 Bedrooms</option>
+          <option value="3 Bedrooms">3 Bedrooms</option>
+          <option value="4 Bedrooms">4 Bedrooms</option>
+          <option value="5 Bedrooms">5 Bedrooms</option>
+          <option value="Studio">Studio</option>
+        </select>
+      </div>
 
-  <!-- Row 4: Full-width Search Button + helper text -->
-  <div class="d-flex flex-column justify-content-between" style="min-height: 18vh;">
-    <div></div>
-    <div class="d-flex justify-content-center">
-      <button type="submit" class="btn btn-accent px-5"
-              style="width: 60%; max-width: 600px; padding: 0.8rem 1rem; font-size: 1.2rem;">
-        Search
-      </button>
-    </div>
-    <div class="text-center mt-3">
-      {% if mode %}
-        <span class="search-helper text-muted small">
-          {% if mode == 'exact' %}
-            Exact matches found
-          {% elif mode == 'near' %}
-            No exact match; showing near matches
-          {% elif mode == 'location' %}
-            No exact match; showing location matches
-          {% else %}
-            No matches found
-          {% endif %}
-        </span>
-      {% endif %}
-    </div>
-  </div>
-</form>
-
-
-    <!-- Separator Title -->
-    <h4 class="fw-600 mt-5 mb-4">Available Rentals</h4>
+      <button type="submit" class="btn btn-accent btn-lg w-100 mt-4">Search Properties</button>
+    </form>
   </div>
 </section>
-
-<!-- Auto-scroll to results after Search -->
-<script>
-function scrollToResults() {
-  setTimeout(() => {
-    document.querySelector('.results-scroll').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 150);
-}
-</script>
 {% endif %}
 
-{% if search_location or search_bedrooms or search_price %}
-  {% if mode == 'near' %}
-    <div class="alert alert-warning alert-dismissible fade show text-center fw-600 fs-5 mb-4" role="alert">
-      No exact <strong>{{ search_bedrooms }}</strong> rentals in <strong>{{ search_location }}</strong> around KES {{ search_price }}.
-      <br><small class="fs-6">Showing similar rooms in the same location.</small>
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-  {% elif mode == 'location' %}
-    <div class="alert alert-warning alert-dismissible fade show text-center fw-600 fs-5 mb-4" role="alert">
-      No <strong>{{ search_bedrooms }}</strong> rentals in <strong>{{ search_location }}</strong>.
-      <br><small class="fs-6">Showing other available units in that area.</small>
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-  {% elif mode == 'none' %}
-    <div class="alert alert-danger alert-dismissible fade show text-center fw-600 fs-5 mb-4" role="alert">
-      No rentals found in <strong>{{ search_location }}</strong>.
-      <br>
-      <a href="?show=all#results" class="alert-link">Browse all listings</a>
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-  {% endif %}
-{% endif %}
-
-<!-- AI close-match helper -->
-<div class="alert alert-info border-0 text-dark fw-500 fs-5 mb-4">
-  <div class="d-flex align-items-center mb-2"><span class="me-2">🤖</span><strong>No exact match for your filters?</strong></div>
-  <p class="mb-1">
-    {% if mode == 'near' %}
-      I couldn’t find a <strong>{{ search_bedrooms }}</strong> in <strong>{{ search_location }}</strong> around <strong>KES {{ search_price }}</strong>.
-      Here are similar rooms in the same area.
-    {% elif mode == 'location' %}
-      No <strong>{{ search_bedrooms }}</strong> rentals in <strong>{{ search_location }}</strong> right now.
-      Showing other available units in that location – same area, different rooms or price.
-    {% elif mode == 'none' %}
-      Zero listings in <strong>{{ search_location }}</strong> at the moment.
-      Broadening search to nearby places or all bedrooms – scroll to see what’s close.
-    {% endif %}
-  </p>
-  <small class="text-muted">Tip: clear filters or adjust price/rooms to see more options.</small>
+<!-- SMART AI SUGGESTIONS -->
+<div class="container mt-5">
+  <div id="smart-ai" style="display: none;">
+    <p id="smart-ai-text" class="mb-3"></p>
+    <div id="smart-ai-buttons" class="d-flex flex-wrap gap-2"></div>
+  </div>
 </div>
 
-<!-- AI price-band mismatch (always show if searched & price off) -->
-{% if search_location and search_price %}
-  {% with price_val=search_price|add:0 %}
-    {% if price_val < 1000 or price_val > 20000 or price_val == 5049 %}
-      <div class="alert alert-warning border-0 text-dark fw-500 fs-5 mb-4">
-        <div class="d-flex align-items-center mb-2">
-          <span class="me-2">🤖</span>
-          <strong>Price out of common bands?</strong>
-        </div>
-        <p class="mb-1">
-          You entered <strong>KES {{ search_price }}</strong> – no exact match in our bands.
-          Showing all rentals in <strong>{{ search_location }}</strong> instead; pick a band above for tighter results.
-        </p>
-        <small class="text-muted">Tip: use the price pills for instant filtering.</small>
-      </div>
-    {% endif %}
-  {% endwith %}
+<!-- Alerts & RESULTS -->
+{% if search_location or search_bedrooms or search_price %}
+  <!-- Your alerts code here if needed -->
 {% endif %}
 
-
-
-<!-- RESULTS (always shown) -->
 <section id="results" class="results-scroll py-5">
   <div class="container">
-    <!-- Header for available rentals -->
     <h2 class="mb-4 fw-600 text-center">Available Rentals</h2>
-
     <div class="row g-4" id="results-row">
       {% for prop in properties %}
         <div class="col-md-4">
@@ -507,48 +1039,220 @@ function scrollToResults() {
   </div>
 </section>
 
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-/* ====================== Smart Suggestions ====================== */
+/* ====================== THEME TOGGLE ====================== */
+function toggleTheme() {
+  document.body.classList.toggle('dark-theme');
+  const icon = document.getElementById('theme-icon');
+  const isDark = document.body.classList.contains('dark-theme');
+  icon.textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// Load saved theme
+document.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark-theme');
+    document.getElementById('theme-icon').textContent = '☀️';
+  }
+});
+
+/* ====================== LOCATION AUTOCOMPLETE (KENYA CITIES) ====================== */
+const kenyaCities = [
+  'Nairobi', 'Mombasa', 'Kisumu', 'Nakuru', 'Eldoret', 'Thika', 'Malindi', 'Kitale',
+  'Garissa', 'Kakamega', 'Meru', 'Nyeri', 'Kericho', 'Naivasha', 'Kilifi', 'Machakos',
+  'Bungoma', 'Embu', 'Kisii', 'Nanyuki', 'Kitui', 'Voi', 'Kapenguria', 'Moyale',
+  'Narok', 'Ruiru', 'Kiambu', 'Karen', 'Westlands', 'Kasarani', 'Embakasi', 'South C',
+  'South B', 'Langata', 'Eastleigh', 'Ngong', 'Limuru', 'Athi River', 'Kangundo Road',
+  'Utawala', 'Syokimau', 'Mlolongo', 'Kitengela', 'Rongai', 'Juja', 'Kahawa',
+  'Githurai', 'Kikuyu', 'Runda', 'Muthaiga', 'Lavington', 'Kilimani', 'Parklands'
+];
+
+const locationInput = document.getElementById('location-input');
+const locationSuggestions = document.getElementById('location-suggestions');
+
+if (locationInput) {
+  locationInput.addEventListener('input', (e) => {
+    const value = e.target.value.toLowerCase().trim();
+    locationSuggestions.innerHTML = '';
+    
+    if (value.length < 2) {
+      locationSuggestions.style.display = 'none';
+      return;
+    }
+
+    const matches = kenyaCities.filter(city => 
+      city.toLowerCase().includes(value)
+    ).slice(0, 8);
+
+    if (matches.length > 0) {
+      matches.forEach(city => {
+        const div = document.createElement('div');
+        div.className = 'location-suggestion-item';
+        div.textContent = city;
+        div.addEventListener('click', () => {
+          locationInput.value = city;
+          locationSuggestions.style.display = 'none';
+        });
+        locationSuggestions.appendChild(div);
+      });
+      locationSuggestions.style.display = 'block';
+    } else {
+      locationSuggestions.style.display = 'none';
+    }
+  });
+
+  // Hide suggestions when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!locationInput.contains(e.target) && !locationSuggestions.contains(e.target)) {
+      locationSuggestions.style.display = 'none';
+    }
+  });
+}
+
+/* ====================== MANUAL PRICE INPUT TOGGLE ====================== */
+function toggleManualPrice() {
+  const manualInput = document.getElementById('manual-price-input');
+  const isHidden = manualInput.style.display === 'none';
+  manualInput.style.display = isHidden ? 'block' : 'none';
+  
+  if (isHidden) {
+    // Clear pill selection
+    document.querySelectorAll('.price-pill').forEach(p => p.classList.remove('active'));
+  }
+}
+
+/* ====================== ANIMATED STARS (ONLY FIX APPLIED) ====================== */
+const starContainer = document.getElementById('stars');
+if (starContainer) {
+  const numStars = 120;
+
+  for (let i = 0; i < numStars; i++) {
+    const star = document.createElement('span');
+    star.classList.add('star');
+    
+    const size = Math.random() * 3 + 1;
+    star.style.width = `${size}px`;
+    star.style.height = `${size}px`;
+    star.style.top = `${Math.random() * 100}%`;
+    star.style.left = `${Math.random() * 100}%`;
+    star.style.opacity = 0.3 + Math.random() * 0.5;
+
+    starContainer.appendChild(star);
+    animateStar(star);
+  }
+
+  function animateStar(star) {
+    const move = () => {
+      const newTop = Math.random() * 100;
+      const newLeft = Math.random() * 100;
+      const duration = 5000 + Math.random() * 5000;
+
+      star.animate([
+        { top: star.style.top, left: star.style.left },
+        { top: `${newTop}%`, left: `${newLeft}%` }
+      ], {
+        duration: duration,
+        iterations: 1,
+        easing: 'linear'
+      }).onfinish = () => {
+        star.style.top = `${newTop}%`;
+        star.style.left = `${newLeft}%`;
+        move();
+      }
+    };
+    move();
+  }
+}
+
+/* ====================== SMART AI SUGGESTIONS (PROFESSIONAL) ====================== */
 function generateSmartSuggestions(location, bedrooms, price) {
   if (!location && !bedrooms && !price) return [];
 
-  const pr = Number(price) || 0;
-  const band = pr >= 20001 ? '20k+' : pr >= 10001 ? '10-20k' : pr >= 5001 ? '5-10k' : pr >= 1000 ? '1-5k' : 'any';
   const suggestions = [];
+  const pr = Number(price) || 0;
 
-  if (location) suggestions.push({ txt: `All rooms in ${location}`, url: `?location=${encodeURIComponent(location)}&show=all#results` });
-  if (bedrooms) suggestions.push({ txt: `Any ${bedrooms} rental`, url: `?bedrooms=${encodeURIComponent(bedrooms)}&show=all#results` });
+  // Determine price band
+  let band = '';
+  if (pr >= 1000 && pr <= 5000) band = '1-5k';
+  else if (pr >= 5001 && pr <= 10000) band = '5-10k';
+  else if (pr >= 10001 && pr <= 20000) band = '10-20k';
+  else if (pr >= 20001) band = '20k+';
 
-  const nextBand = band === '1-5k' ? '5-10k' : band === '5-10k' ? '10-20k' : band === '10-20k' ? '20k+' : '';
-  if (location && bedrooms && nextBand) {
-    suggestions.push({ txt: `${bedrooms} in ${location} (KES ${nextBand})`, 
-      url: `?location=${encodeURIComponent(location)}&bedrooms=${encodeURIComponent(bedrooms)}&price_range=${nextBand}#results` 
+  // Professional messages based on search criteria
+  const messages = [
+    `We couldn't find exact matches for ${bedrooms} in ${location} at KES ${price}. Here are some alternative options that might interest you:`,
+    `Your search for ${bedrooms} at KES ${price} in ${location} returned limited results. Consider these related properties:`,
+    `No exact matches found for your criteria. We recommend exploring these similar options:`,
+    `Based on your search for ${bedrooms} in ${location}, here are some alternative suggestions:`
+  ];
+
+  // Random professional message
+  const aiMessage = messages[Math.floor(Math.random() * messages.length)];
+
+  // Suggestion 1: Same location, any price
+  if (location) {
+    suggestions.push({ 
+      txt: `All ${bedrooms || 'properties'} in ${location}`, 
+      url: `?location=${encodeURIComponent(location)}${bedrooms ? '&bedrooms=' + encodeURIComponent(bedrooms) : ''}&show=all#results`
     });
   }
 
-  return suggestions;
+  // Suggestion 2: Same bedrooms, any location
+  if (bedrooms) {
+    suggestions.push({ 
+      txt: `${bedrooms} across all locations`, 
+      url: `?bedrooms=${encodeURIComponent(bedrooms)}&show=all#results`
+    });
+  }
+
+  // Suggestion 3: Next price band in same location
+  const nextBand = band === '1-5k' ? '5-10k' : band === '5-10k' ? '10-20k' : band === '10-20k' ? '20k+' : '1-5k';
+  if (location && bedrooms && nextBand) {
+    const bandText = nextBand === '20k+' ? 'over 20k' : nextBand.replace('-', ' to ');
+    suggestions.push({ 
+      txt: `${bedrooms} in ${location} (KES ${bandText})`, 
+      url: `?location=${encodeURIComponent(location)}&bedrooms=${encodeURIComponent(bedrooms)}&price_range=${nextBand}#results`
+    });
+  }
+
+  // Suggestion 4: Lower price in same location
+  if (band && location && bedrooms) {
+    const lowerBand = band === '20k+' ? '10-20k' : band === '10-20k' ? '5-10k' : band === '5-10k' ? '1-5k' : '';
+    if (lowerBand) {
+      const bandText = lowerBand.replace('-', ' to ');
+      suggestions.push({ 
+        txt: `More affordable options in ${location} (KES ${bandText})`, 
+        url: `?location=${encodeURIComponent(location)}&bedrooms=${encodeURIComponent(bedrooms)}&price_range=${lowerBand}#results`
+      });
+    }
+  }
+
+  return { message: aiMessage, suggestions };
 }
 
 function updateSmartAI(location, bedrooms, price) {
   const container = document.getElementById('smart-ai');
   const textEl = document.getElementById('smart-ai-text');
   const buttonsEl = document.getElementById('smart-ai-buttons');
-  const suggestions = generateSmartSuggestions(location, bedrooms, price);
-
-  if (suggestions.length === 0) {
+  
+  const result = generateSmartSuggestions(location, bedrooms, price);
+  
+  if (!result || result.suggestions.length === 0) {
     container.style.display = 'none';
     return;
   }
 
-  textEl.textContent = 'Tight criteria! Loosen one filter for more choices:';
+  textEl.innerHTML = `<span class="ai-label">Alternative Options</span>${result.message}`;
   buttonsEl.innerHTML = '';
-  suggestions.forEach(s => {
+  
+  result.suggestions.forEach(s => {
     const btn = document.createElement('a');
     btn.href = s.url;
-    btn.className = 'btn btn-sm btn-outline-primary';
+    btn.className = 'btn btn-sm btn-outline-dark';
     btn.textContent = s.txt;
     buttonsEl.appendChild(btn);
   });
@@ -562,11 +1266,17 @@ document.querySelectorAll('.price-pill').forEach(pill => {
     document.querySelectorAll('.price-pill').forEach(p => p.classList.remove('active'));
     pill.classList.add('active');
     const val = pill.dataset.val;
-    document.querySelector('input[name="price"]').value =
+    
+    const priceValue = 
       val === '1-5k' ? '5000' :
       val === '5-10k' ? '10000' :
       val === '10-20k' ? '20000' :
       val === '20k+' ? '25000' : '';
+    
+    document.getElementById('price-hidden').value = priceValue;
+    
+    // Hide manual input
+    document.getElementById('manual-price-input').style.display = 'none';
   });
 });
 
@@ -578,68 +1288,186 @@ document.querySelectorAll('.chip').forEach(chip => {
   });
 });
 
-const priceInput = document.querySelector('input[name="price"]');
-priceInput?.addEventListener('input', () => {
-  const val = Number(priceInput.value) || 0;
-  document.querySelectorAll('.price-pill').forEach(p => p.classList.remove('active'));
-  let target = '';
-  if (val >= 1000 && val <= 5000) target = '1-5k';
-  if (val >= 5001 && val <= 10000) target = '5-10k';
-  if (val >= 10001 && val <= 20000) target = '10-20k';
-  if (val >= 20001) target = '20k+';
-  document.querySelector(`.price-pill[data-val="${target}"]`)?.classList.add('active');
-});
+// Manual price input handling
+const manualPriceInput = document.getElementById('price-input-manual');
+if (manualPriceInput) {
+  manualPriceInput.addEventListener('input', () => {
+    const val = Number(manualPriceInput.value) || 0;
+    document.getElementById('price-hidden').value = manualPriceInput.value;
+    
+    // Remove all active pills first
+    document.querySelectorAll('.price-pill').forEach(p => p.classList.remove('active'));
+    
+    // Activate the correct pill based on price range
+    let target = '';
+    if (val >= 1000 && val <= 5000) target = '1-5k';
+    else if (val >= 5001 && val <= 10000) target = '5-10k';
+    else if (val >= 10001 && val <= 20000) target = '10-20k';
+    else if (val >= 20001) target = '20k+';
+    
+    if (target) {
+      document.querySelector(`.price-pill[data-val="${target}"]`)?.classList.add('active');
+    }
+  });
+}
 
 const bedSelect = document.querySelector('select[name="bedrooms"]');
-bedSelect?.addEventListener('change', () => {
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  document.querySelector(`.chip[data-bed="${bedSelect.value}"]`)?.classList.add('active');
-});
+if (bedSelect) {
+  bedSelect.addEventListener('change', () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    document.querySelector(`.chip[data-bed="${bedSelect.value}"]`)?.classList.add('active');
+  });
+}
 
 /* ====================== AJAX Search ====================== */
-document.querySelector('#filters').addEventListener('submit', async e => {
-  e.preventDefault();
-  const form = e.target;
-  const loc = form.location.value.trim();
-  const bed = form.bedrooms.value;
-  const pr = form.price.value;
+const filtersForm = document.querySelector('#filters');
+if (filtersForm) {
+  filtersForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    
+    // Hide all error messages
+    document.querySelectorAll('.form-error').forEach(err => err.classList.remove('show'));
+    
+    const form = e.target;
+    const loc = form.location.value.trim();
+    const bed = form.bedrooms.value;
+    const pr = document.getElementById('price-hidden').value || manualPriceInput?.value || '';
 
-  if (!loc || !bed || !pr) {
-    alert('Please fill Location, Bedrooms and Price.');
-    return;
-  }
+    // Validation with custom error messages
+    let hasError = false;
+    
+    if (!loc) {
+      document.getElementById('location-error').classList.add('show');
+      hasError = true;
+    }
+    
+    if (!bed) {
+      document.getElementById('bedrooms-error').classList.add('show');
+      hasError = true;
+    }
+    
+    if (!pr) {
+      document.getElementById('price-error').classList.add('show');
+      hasError = true;
+    }
+    
+    if (hasError) {
+      // Scroll to first error
+      const firstError = document.querySelector('.form-error.show');
+      if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
 
-  const url = new URL(window.location);
-  const params = new URLSearchParams(new FormData(form));
-  for (const [k,v] of params) url.searchParams.set(k,v);
-  window.history.replaceState({}, '', url);
+    // Update hidden price field
+    document.getElementById('price-hidden').value = pr;
 
-  try {
-    const res = await fetch(url.href);
-    const html = await res.text();
-    const newDoc = new DOMParser().parseFromString(html, 'text/html');
+    const url = new URL(window.location);
+    url.searchParams.set('location', loc);
+    url.searchParams.set('bedrooms', bed);
+    url.searchParams.set('price', pr);
+    window.history.replaceState({}, '', url);
 
-    // Replace results and smart AI
-    const newResults = newDoc.querySelector('#results');
-    document.querySelector('#results').replaceWith(newResults);
+    try {
+      const res = await fetch(url.href);
+      const html = await res.text();
+      const newDoc = new DOMParser().parseFromString(html, 'text/html');
 
-    const newSmartAI = newDoc.querySelector('#smart-ai');
-    if (newSmartAI) document.querySelector('#smart-ai').replaceWith(newSmartAI);
+      const newResults = newDoc.querySelector('#results');
+      if (newResults) document.querySelector('#results').replaceWith(newResults);
 
-    // Fire scroll and suggestion update
-    document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
-  } catch(err) {
-    console.error('Search failed', err);
-    alert('Search failed. Please try again.');
-  }
-});
+      const newSmartAI = newDoc.querySelector('#smart-ai');
+      if (newSmartAI && document.querySelector('#smart-ai')) {
+        document.querySelector('#smart-ai').replaceWith(newSmartAI);
+      }
+
+      // Show smart AI after search
+      updateSmartAI(loc, bed, pr);
+
+      document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+    } catch(err) {
+      console.error('Search failed', err);
+      
+      // Show custom error message
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'alert alert-danger mt-3';
+      errorDiv.textContent = 'Search failed. Please check your connection and try again.';
+      form.insertAdjacentElement('afterend', errorDiv);
+      
+      setTimeout(() => errorDiv.remove(), 5000);
+    }
+  });
+}
 
 /* ====================== Fire initial events ====================== */
-priceInput?.dispatchEvent(new Event('input'));
-bedSelect?.dispatchEvent(new Event('change'));
-updateSmartAI(priceInput?.value ? document.getElementById('location-input').value : '', 
-              bedSelect?.value, priceInput?.value);
+function scrollToResults(event) {
+    event.preventDefault();
+    const results = document.getElementById('results');
+    const headerOffset = 50;
+    const elementPosition = results.getBoundingClientRect().top + window.pageYOffset;
+    const offsetPosition = elementPosition - headerOffset;
 
+    window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if(window.location.hash === '#results') {
+    const section = document.getElementById('results');
+    if(section) {
+      const yOffset = -100;
+      const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }
+
+  function getQueryParams() {
+    const params = {};
+    location.search.substr(1).split("&").forEach(function(item) {
+      const [key, value] = item.split("=");
+      if(key) params[key] = decodeURIComponent(value);
+    });
+    return params;
+  }
+
+  const params = getQueryParams();
+  const location = params.location || '';
+  const bedrooms = params.bedrooms || '';
+  const price = params.price || '';
+
+  // Update smart AI on page load if search params exist
+  if (location || bedrooms || price) {
+    updateSmartAI(location, bedrooms, price);
+  }
+
+  // Set active states for pills/chips based on URL params
+  if (price) {
+    const priceNum = Number(price);
+    let pillVal = '';
+    if (priceNum >= 1000 && priceNum <= 5000) pillVal = '1-5k';
+    else if (priceNum >= 5001 && priceNum <= 10000) pillVal = '5-10k';
+    else if (priceNum >= 10001 && priceNum <= 20000) pillVal = '10-20k';
+    else if (priceNum >= 20001) pillVal = '20k+';
+    
+    if (pillVal) {
+      document.querySelector(`.price-pill[data-val="${pillVal}"]`)?.classList.add('active');
+    } else {
+      // Show manual input if custom price
+      document.getElementById('manual-price-input').style.display = 'block';
+      if (manualPriceInput) manualPriceInput.value = price;
+    }
+    document.getElementById('price-hidden').value = price;
+  }
+
+  if (bedrooms) {
+    document.querySelector(`.chip[data-bed="${bedrooms}"]`)?.classList.add('active');
+    if (bedSelect) bedSelect.value = bedrooms;
+  }
+});
 </script>
+
 </body>
 </html>

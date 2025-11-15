@@ -3,27 +3,156 @@
 <head>
   <meta charset="utf-8">
   <title>{{ property.title }} – iRent ProSpace</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   {% load static %}
   <link rel="stylesheet" href="{% static 'listings/style.css' %}">
+  <style>
+    body {
+      background-color: #fff;
+      color: #111;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .navbar-custom {
+      background-color: #000;
+    }
+    .navbar-custom .navbar-brand {
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    .navbar-custom .navbar-brand:hover {
+      color: #ccc;
+    }
+
+    .container {
+      max-width: 900px;
+    }
+
+    h2 {
+      font-weight: 700;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #000;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 0.8rem;
+    }
+
+    strong {
+      color: #000;
+    }
+
+    .btn-accent {
+      background-color: #000;
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+
+    .btn-accent:hover {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .property-card {
+      border: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+    }
+
+    /* Carousel styles */
+    #propertyCarousel {
+      max-width: 100%;
+      margin-bottom: 2rem;
+    }
+
+    .carousel-inner img,
+    .carousel-inner video {
+      width: auto;
+      max-width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 576px) {
+      h2 {
+        font-size: 1.5rem;
+      }
+      p {
+        font-size: 1rem;
+      }
+      .btn-accent {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
+      .carousel-inner img,
+      .carousel-inner video {
+        max-height: 200px;
+      }
+    }
+  </style>
 </head>
 <body>
-<nav class="navbar navbar-custom">
-  <div class="container">
-    <a class="navbar-brand" href="{% url 'home' %}">iRent ProSpace</a>
+  <nav class="navbar navbar-custom">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">iRent ProSpace</a>
+    </div>
+  </nav>
+
+  <div class="container mt-5 mb-5">
+    <div class="property-card">
+      
+      <!-- Property Media Carousel -->
+      {% if property.images.all or property.videos.all %}
+      <div id="propertyCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          
+          {% for image in property.images.all %}
+          <div class="carousel-item {% if forloop.first and not property.videos.all %}active{% endif %}">
+            <img src="{{ image.image.url }}" class="d-block w-100" alt="Property image {{ forloop.counter }}">
+          </div>
+          {% endfor %}
+
+          {% for video in property.videos.all %}
+          <div class="carousel-item {% if forloop.first and property.images.all == None %}active{% endif %}">
+            <video controls class="d-block w-100">
+              <source src="{{ video.video.url }}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          {% endfor %}
+
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+      {% endif %}
+
+      <h2>{{ property.title }}</h2>
+      <p><strong>Location:</strong> {{ property.location }}</p>
+      <p><strong>Price:</strong> KES {{ property.price }}</p>
+      <p><strong>Bedrooms:</strong> {{ property.bedrooms }}</p>
+      <hr>
+      <p>{{ property.description|linebreaks }}</p>
+      <a class="btn btn-accent mt-3" href="{% url 'home' %}">← Back to listings</a>
+    </div>
   </div>
-</nav>
 
-<div class="container mt-4">
-  <h2>{{ property.title }}</h2>
-  <p><strong>Location:</strong> {{ property.location }}</p>
-  <p><strong>Price:</strong> KES {{ property.price }}</p>
-  <p><strong>Type:</strong> {{ property.bedrooms }}</p>
-  <p>{{ property.description|linebreaks }}</p>
-
-  <a class="btn btn-accent" href="{% url 'home' %}">← Back to listings</a>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

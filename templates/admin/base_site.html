@@ -1,0 +1,290 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | iRent ProSpace Admin{% endblock %}
+
+{% block extrastyle %}
+<style>
+  /* --- Dark Mode Color Palette --- */
+  :root {
+    --primary: #3bc9c9;        /* Calm teal */
+    --primary-hover: #33bdbd;  /* Slightly darker teal */
+    --secondary: #495057;      /* Muted gray for headers/cards */
+    --accent: #f8c291;         /* Soft warm highlight */
+    --background: #121212;     /* Dark background */
+    --surface: #1e1e1e;        /* Card / module surfaces */
+    --light-text: #e0e0e0;     /* Light text for contrast */
+    --dark-text: #ffffff;       /* Strong contrast for titles */
+    --border: #333333;          /* Divider color */
+    --success: #38b000;         /* Green for success */
+    --danger: #ff6b6b;          /* Red for errors */
+  }
+
+  /* --- Global Styles --- */
+  body {
+    background: var(--background);
+    color: var(--light-text);
+    font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--primary-hover);
+  }
+
+  /* --- Header --- */
+  #header {
+    background: var(--surface);
+    color: var(--dark-text);
+    border-bottom: 2px solid var(--primary);
+    padding: 1rem 2rem;
+  }
+
+  #branding h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  #branding h1 a {
+    color: var(--dark-text);
+  }
+
+  /* --- Breadcrumbs --- */
+  div.breadcrumbs {
+    background: var(--surface);
+    color: var(--light-text);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+  }
+
+  div.breadcrumbs a {
+    color: var(--primary);
+  }
+
+  /* --- Sidebar --- */
+  #nav-sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding-top: 1rem;
+  }
+
+  #nav-sidebar .app-list .model {
+    margin: 4px 0;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  #nav-sidebar .app-list .model a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--light-text);
+    font-weight: 500;
+    border-radius: 6px;
+  }
+
+  #nav-sidebar .app-list .model a:hover {
+    background: rgba(59, 201, 201, 0.2);
+    color: var(--primary);
+  }
+
+  /* --- Buttons --- */
+  .button,
+  input[type=submit],
+  input[type=button],
+  .submit-row input {
+    background: var(--primary);
+    color: var(--dark-text);
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .button:hover,
+  input[type=submit]:hover {
+    background: var(--primary-hover);
+  }
+
+  .button-success {
+    background: var(--success);
+  }
+
+  .button-danger {
+    background: var(--danger);
+  }
+
+  /* --- Tables --- */
+  .module table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .module th {
+    background: var(--secondary);
+    color: var(--dark-text);
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .module td {
+    padding: 0.5rem 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .module tr:nth-child(even) {
+    background: #2a2a2a;
+  }
+
+  /* --- Module Headers --- */
+  .module h2,
+  .module caption {
+    background: var(--secondary);
+    color: var(--dark-text);
+    border-radius: 8px 8px 0 0;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+  }
+
+  /* --- Cards / Dashboard --- */
+  .dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 1.2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+  }
+
+  .card h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--light-text);
+  }
+
+  .card .number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+    color: var(--primary);
+  }
+
+  /* --- Widgets / Stats --- */
+  .widget {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem;
+    background: #2a2a2a;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .widget .title {
+    font-weight: 600;
+    color: var(--light-text);
+  }
+
+  .widget .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  /* --- Forms --- */
+  .form-row {
+    margin-bottom: 1rem;
+  }
+
+  .form-row label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .form-row input,
+  .form-row select,
+  .form-row textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #2a2a2a;
+    color: var(--light-text);
+    transition: border-color 0.2s;
+  }
+
+  .form-row input:focus,
+  .form-row select:focus,
+  .form-row textarea:focus {
+    border-color: var(--primary);
+    outline: none;
+  }
+
+</style>
+{% endblock %}
+
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">iRent ProSpace Admin</a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+  <div class="card">
+    <h3>Total Rentals</h3>
+    <div class="number">124</div>
+  </div>
+  <div class="card">
+    <h3>Available Spaces</h3>
+    <div class="number">58</div>
+  </div>
+  <div class="card">
+    <h3>Pending Requests</h3>
+    <div class="number">12</div>
+  </div>
+  <div class="card">
+    <h3>Revenue</h3>
+    <div class="number">$15,420</div>
+  </div>
+</div>
+
+<div class="widget">
+  <div class="title">Active Users</div>
+  <div class="value">87</div>
+</div>
+
+<div class="widget">
+  <div class="title">New Bookings Today</div>
+  <div class="value">5</div>
+</div>
+{% endblock %}
